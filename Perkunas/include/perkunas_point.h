@@ -7,17 +7,20 @@
 
 namespace perkunas
 {
-	template<_Arithmethic_concept _Type>
-	struct Point
+	namespace geometry
 	{
-		_Type m_x;
-		_Type m_y;
-
-		template<_Arithmethic_concept _Other_type>
-		operator Point<_Other_type>() noexcept
+		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		struct Point
 		{
-			return { static_cast<_Other_type>(m_x), static_cast<_Other_type>(m_y) } ;
-		}
-	};
+			ArithmethicType m_x;
+			ArithmethicType m_y;
+
+			template<common::concepts::_Arithmethic_concept _Other_type>
+			operator Point<_Other_type>() noexcept
+			{
+				return { static_cast<_Other_type>(m_x), static_cast<_Other_type>(m_y) } ;
+			}
+		};
+	}
 }
 #endif // !INCLUDED_PERKUNAS_POINT_H

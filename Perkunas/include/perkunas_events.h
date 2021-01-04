@@ -1,115 +1,114 @@
+// perkunas_events.h
 
-#ifndef INCLUDED_PERKUNAS_WINDOW_EVENTS
-#define INCLUDED_PERKUNAS_WINDOW_EVENTS
+#ifndef INCLUDED_PERKUNAS_EVENTS
+#define INCLUDED_PERKUNAS_EVENTS
 
 #include "perkunas_types.h"
 
 namespace perkunas
 {
-	namespace events
+	namespace event
 	{
-		enum class EventType
-		{
-	        FIRSTEVENT     = 0,     /**< Unused (do not remove) */
-            /* Application events */
-            QUIT           = 0x100, /**< User-requested quit */
-            /* These application events have special meaning on iOS, see README-ios.md for details */
-            APP_TERMINATING,        /**< The application is being terminated by the OS
-                                             Called on iOS in applicationWillTerminate()
-                                             Called on Android in onDestroy()*/
-            APP_LOWMEMORY,          /**< The application is low on memory, free memory if possible.
-                                             Called on iOS in applicationDidReceiveMemoryWarning()
-                                             Called on Android in onLowMemory() */
-            APP_WILLENTERBACKGROUND, /**< The application is about to enter the background
-                                             Called on iOS in applicationWillResignActive()
-                                             Called on Android in onPause()*/
-            APP_DIDENTERBACKGROUND, /**< The application did enter the background and may not get CPU for some time
-                                             Called on iOS in applicationDidEnterBackground()
-                                             Called on Android in onPause()*/
-            APP_WILLENTERFOREGROUND, /**< The application is about to enter the foreground
-                                             Called on iOS in applicationWillEnterForeground()
-                                             Called on Android in onResume() */
-            APP_DIDENTERFOREGROUND, /**< The application is now interactive
-                                             Called on iOS in applicationDidBecomeActive()
-                                             Called on Android in onResume()*/
-            /* Display events */
-            DISPLAYEVENT   = 0x150,  /**< Display state change */
-            /* Window events */
-            WINDOWEVENT    = 0x200, /**< Window state change */
-            SYSWMEVENT,             /**< System specific event */
-            /* Keyboard events */
-            KEYDOWN        = 0x300, /**< Key pressed */
-            KEYUP,                  /**< Key released */
-            TEXTEDITING,            /**< Keyboard text editing (composition) */
-            TEXTINPUT,              /**< Keyboard text input */
-            KEYMAPCHANGED,          /**< Keymap changed due to a system event such as an
-                                             input language or keyboard layout change. */
-            /* Mouse events */
-            MOUSEMOTION    = 0x400, /**< Mouse moved */
-            MOUSEBUTTONDOWN,        /**< Mouse button pressed */
-            MOUSEBUTTONUP,          /**< Mouse button released */
-            MOUSEWHEEL,             /**< Mouse wheel motion */
-            /* Joystick events */
-            JOYAXISMOTION  = 0x600, /**< Joystick axis motion */
-            JOYBALLMOTION,          /**< Joystick trackball motion */
-            JOYHATMOTION,           /**< Joystick hat position change */
-            JOYBUTTONDOWN,          /**< Joystick button pressed */
-            JOYBUTTONUP,            /**< Joystick button released */
-            JOYDEVICEADDED,         /**< A new joystick has been inserted into the system */
-            JOYDEVICEREMOVED,       /**< An opened joystick has been removed */
-            /* Game controller events */
-            CONTROLLERAXISMOTION  = 0x650, /**< Game controller axis motion */
-            CONTROLLERBUTTONDOWN,          /**< Game controller button pressed */
-            CONTROLLERBUTTONUP,            /**< Game controller button released */
-            CONTROLLERDEVICEADDED,         /**< A new Game controller has been inserted into the system */
-            CONTROLLERDEVICEREMOVED,       /**< An opened Game controller has been removed */
-            CONTROLLERDEVICEREMAPPED,      /**< The controller mapping was updated */
-            /* Touch events */
-            FINGERDOWN      = 0x700,
-            FINGERUP,
-            FINGERMOTION,
-            /* Gesture events */
-            DOLLARGESTURE   = 0x800,
-            DOLLARRECORD,
-            MULTIGESTURE,
-            /* Clipboard events */
-            CLIPBOARDUPDATE = 0x900, /**< The clipboard changed */
-            /* Drag and drop events */
-            DROPFILE        = 0x1000, /**< The system requests a file open */
-            DROPTEXT,                 /**< text/plain drag-and-drop event */
-            DROPBEGIN,                /**< A new set of drops is beginning (NULL filename) */
-            DROPCOMPLETE,             /**< Current set of drops is now complete (NULL filename) */
-            /* Audio hotplug events */
-            AUDIODEVICEADDED = 0x1100, /**< A new audio device is available */
-            AUDIODEVICEREMOVED,        /**< An audio device has been removed. */
-            /* Sensor events */
-            SENSORUPDATE = 0x1200,     /**< A sensor was updated */
-            /* Render events */
-            RENDER_TARGETS_RESET = 0x2000, /**< The render targets have been reset and their contents need to be updated */
-            RENDER_DEVICE_RESET, /**< The device has been reset and all textures need to be recreated */
-            /** Events ::USEREVENT through ::LASTEVENT are for your use,
-             *  and should be allocated with RegisterEvents()
-             */
-            USEREVENT    = 0x8000,
-            /**
-             *  This last event is only for bounding internal arrays
-             */
-            LASTEVENT    = 0xFFFF
-		};
+		//enum class EventType
+		//{
+	 //       FIRSTEVENT     = 0,     /**< Unused (do not remove) */
+  //          /* Application events */
+  //          QUIT           = 0x100, /**< User-requested quit */
+  //          /* These application events have special meaning on iOS, see README-ios.md for details */
+  //          APP_TERMINATING,        /**< The application is being terminated by the OS
+  //                                           Called on iOS in applicationWillTerminate()
+  //                                           Called on Android in onDestroy()*/
+  //          APP_LOWMEMORY,          /**< The application is low on memory, free memory if possible.
+  //                                           Called on iOS in applicationDidReceiveMemoryWarning()
+  //                                           Called on Android in onLowMemory() */
+  //          APP_WILLENTERBACKGROUND, /**< The application is about to enter the background
+  //                                           Called on iOS in applicationWillResignActive()
+  //                                           Called on Android in onPause()*/
+  //          APP_DIDENTERBACKGROUND, /**< The application did enter the background and may not get CPU for some time
+  //                                           Called on iOS in applicationDidEnterBackground()
+  //                                           Called on Android in onPause()*/
+  //          APP_WILLENTERFOREGROUND, /**< The application is about to enter the foreground
+  //                                           Called on iOS in applicationWillEnterForeground()
+  //                                           Called on Android in onResume() */
+  //          APP_DIDENTERFOREGROUND, /**< The application is now interactive
+  //                                           Called on iOS in applicationDidBecomeActive()
+  //                                           Called on Android in onResume()*/
+  //          /* Display events */
+  //          DISPLAYEVENT   = 0x150,  /**< Display state change */
+  //          /* Window events */
+  //          WINDOWEVENT    = 0x200, /**< Window state change */
+  //          SYSWMEVENT,             /**< System specific event */
+  //          /* Keyboard events */
+  //          KEYDOWN        = 0x300, /**< Key pressed */
+  //          KEYUP,                  /**< Key released */
+  //          TEXTEDITING,            /**< Keyboard text editing (composition) */
+  //          TEXTINPUT,              /**< Keyboard text input */
+  //          KEYMAPCHANGED,          /**< Keymap changed due to a system event such as an
+  //                                           input language or keyboard layout change. */
+  //          /* Mouse events */
+  //          MOUSEMOTION    = 0x400, /**< Mouse moved */
+  //          MOUSEBUTTONDOWN,        /**< Mouse button pressed */
+  //          MOUSEBUTTONUP,          /**< Mouse button released */
+  //          MOUSEWHEEL,             /**< Mouse wheel motion */
+  //          /* Joystick events */
+  //          JOYAXISMOTION  = 0x600, /**< Joystick axis motion */
+  //          JOYBALLMOTION,          /**< Joystick trackball motion */
+  //          JOYHATMOTION,           /**< Joystick hat position change */
+  //          JOYBUTTONDOWN,          /**< Joystick button pressed */
+  //          JOYBUTTONUP,            /**< Joystick button released */
+  //          JOYDEVICEADDED,         /**< A new joystick has been inserted into the system */
+  //          JOYDEVICEREMOVED,       /**< An opened joystick has been removed */
+  //          /* Game controller events */
+  //          CONTROLLERAXISMOTION  = 0x650, /**< Game controller axis motion */
+  //          CONTROLLERBUTTONDOWN,          /**< Game controller button pressed */
+  //          CONTROLLERBUTTONUP,            /**< Game controller button released */
+  //          CONTROLLERDEVICEADDED,         /**< A new Game controller has been inserted into the system */
+  //          CONTROLLERDEVICEREMOVED,       /**< An opened Game controller has been removed */
+  //          CONTROLLERDEVICEREMAPPED,      /**< The controller mapping was updated */
+  //          /* Touch events */
+  //          FINGERDOWN      = 0x700,
+  //          FINGERUP,
+  //          FINGERMOTION,
+  //          /* Gesture events */
+  //          DOLLARGESTURE   = 0x800,
+  //          DOLLARRECORD,
+  //          MULTIGESTURE,
+  //          /* Clipboard events */
+  //          CLIPBOARDUPDATE = 0x900, /**< The clipboard changed */
+  //          /* Drag and drop events */
+  //          DROPFILE        = 0x1000, /**< The system requests a file open */
+  //          DROPTEXT,                 /**< text/plain drag-and-drop event */
+  //          DROPBEGIN,                /**< A new set of drops is beginning (NULL filename) */
+  //          DROPCOMPLETE,             /**< Current set of drops is now complete (NULL filename) */
+  //          /* Audio hotplug events */
+  //          AUDIODEVICEADDED = 0x1100, /**< A new audio device is available */
+  //          AUDIODEVICEREMOVED,        /**< An audio device has been removed. */
+  //          /* Sensor events */
+  //          SENSORUPDATE = 0x1200,     /**< A sensor was updated */
+  //          /* Render events */
+  //          RENDER_TARGETS_RESET = 0x2000, /**< The render targets have been reset and their contents need to be updated */
+  //          RENDER_DEVICE_RESET, /**< The device has been reset and all textures need to be recreated */
+  //          /** Events ::USEREVENT through ::LASTEVENT are for your use,
+  //           *  and should be allocated with RegisterEvents()
+  //           */
+  //          USEREVENT    = 0x8000,
+  //          /**
+  //           *  This last event is only for bounding internal arrays
+  //           */
+  //          LASTEVENT    = 0xFFFF
+		//};
 
-        // Common Data
-        class Event 
+        class Common 
         {
         public:
-            Event(WindowID p_window_id) 
+            Common(video::WindowID p_window_id) 
                 : m_window_id(p_window_id) {}
-            WindowID m_window_id { static_cast<WindowID>(~0) };
-            virtual ~Event() = default;
+            video::WindowID m_window_id { static_cast<video::WindowID>(~0) };
+            virtual ~Common() = default;
         };
-
         namespace window
         {
-            class Common : protected Event
+            class Base : protected Common
             {
             public:
                 enum class PossibleID
@@ -152,11 +151,11 @@ namespace perkunas
                 };
                 const Type m_type_id = Type::Unknown;
 
-                Common(WindowID p_window_id, Type p_type_id) 
-                    : Event(p_window_id)
+                Base(video::WindowID p_window_id, Type p_type_id) 
+                    : Common(p_window_id)
                     , m_type_id(p_type_id) {};
             };
-            class Visiblity : private Common
+            class Visiblity : private window::Base
             {
             public:
                 enum class ID
@@ -167,47 +166,48 @@ namespace perkunas
                 };
                 ID m_id;
 
-                explicit Visiblity(WindowID p_window_id, ID p_id)
-                    : Common(p_window_id, Type::Status)
+                explicit Visiblity(video::WindowID p_window_id, ID p_id)
+                    : Base(p_window_id, Type::Status)
                     , m_id(p_id) { };
             };
-            class Move : private Common
+            class Move : private window::Base
             {
             public:
-                typedef Point<int> Position;
+                typedef geometry::Point<int> Position;
                 Position m_position;
 
-                explicit Move(WindowID p_window_id, 
+                explicit Move(video::WindowID p_window_id,
                               const Position& p_position)
-                    : Common(p_window_id, Type::Move)
+                    : Base(p_window_id, Type::Move)
                     , m_position(p_position) { };
             };
-            class Resize : private Common
+            class Resize : private window::Base
             {
             public:
-                typedef Point<int> Size;
+                typedef geometry::Point<int> Size;
                 Size m_size;
 
-                explicit Resize(WindowID p_window_id, const Size& p_size)
-                    : Common(p_window_id, Type::Size)
+                explicit Resize(video::WindowID p_window_id, const Size& p_size)
+                    : Base(p_window_id, Type::Size)
                     , m_size(p_size) { };
             };
-            class Status : private Common
+            class Status : private window::Base
             {
             public:
                 enum class ID
                 {
                     Minimised = static_cast<int>(PossibleID::MINIMIZED),
                     Maximised = static_cast<int>(PossibleID::MAXIMIZED),
-                    Restored = static_cast<int>(PossibleID::RESTORED)
+                    Restored = static_cast<int>(PossibleID::RESTORED),
+                    Close = static_cast<int>(PossibleID::CLOSE)
                 };
                 ID m_id;
 
-                explicit Status(WindowID p_window_id, ID p_id)
-                    : Common(p_window_id, Type::Status)
+                explicit Status(video::WindowID p_window_id, ID p_id)
+                    : Base(p_window_id, Type::Status)
                     , m_id(p_id) { };
             };
-            class Focus : private Common
+            class Focus : private window::Base
             {
             public:
                 enum class ID
@@ -219,36 +219,40 @@ namespace perkunas
                 };
                 ID m_id;
 
-                explicit Focus(WindowID p_window_id, ID p_id)
-                    : Common(p_window_id, Type::Focus)
+                explicit Focus(video::WindowID p_window_id, ID p_id)
+                    : Base(p_window_id, Type::Focus)
                     , m_id(p_id) {};
             };
+            class Close : private window::Base
+            {
+                
+            };
 
-            constexpr int id_lookup[static_cast<int>(Common::PossibleID::COUNT)]
+            // TODO: move to implementation
+            constexpr int id_lookup[static_cast<int>(Base::PossibleID::COUNT)]
             {
                  -1,                                            //NONE,       
-                 static_cast<int>(Common::Type::Visibility),    //SHOWN,      
-                 static_cast<int>(Common::Type::Visibility),    //HIDDEN,       
-                 static_cast<int>(Common::Type::Visibility),    //EXPOSED, 
-                 static_cast<int>(Common::Type::Move),          //MOVED, 
-                 static_cast<int>(Common::Type::Size),          //RESIZED,  
+                 static_cast<int>(Base::Type::Visibility),      //SHOWN,      
+                 static_cast<int>(Base::Type::Visibility),      //HIDDEN,       
+                 static_cast<int>(Base::Type::Visibility),      //EXPOSED, 
+                 static_cast<int>(Base::Type::Move),            //MOVED, 
+                 static_cast<int>(Base::Type::Size),            //RESIZED,  
 				 -1,  /* No type needed */                      //SIZE_CHANGED, 
-                 static_cast<int>(Common::Type::Status),        //MINIMIZED,    
-                 static_cast<int>(Common::Type::Status),        //MAXIMIZED, 
-                 static_cast<int>(Common::Type::Status),        //RESTORED,   
-                 static_cast<int>(Common::Type::Focus),	        //ENTER,    
-                 static_cast<int>(Common::Type::Focus), 	    //LEAVE, 
-                 static_cast<int>(Common::Type::Focus),         //FOCUS_GAINED,
-                 static_cast<int>(Common::Type::Focus),         //FOCUS_LOST,  
-				 -1,  /* Not implemented */                     //CLOSE,   
+                 static_cast<int>(Base::Type::Status),          //MINIMIZED,    
+                 static_cast<int>(Base::Type::Status),          //MAXIMIZED, 
+                 static_cast<int>(Base::Type::Status),          //RESTORED,   
+                 static_cast<int>(Base::Type::Focus),	        //ENTER,    
+                 static_cast<int>(Base::Type::Focus), 	        //LEAVE, 
+                 static_cast<int>(Base::Type::Focus),           //FOCUS_GAINED,
+                 static_cast<int>(Base::Type::Focus),           //FOCUS_LOST,  
+                 static_cast<int>(Base::Type::Status),          //CLOSE,   
 				 -1,  /* Not implemented */                     //TAKE_FOCUS,
 				 -1,  /* Not implemented */                     //HIT_TEST, 
             };
         }
-        
         namespace input
         {
-            class Common : public Event
+            class Base : public Common
             {
             protected:
                 enum class State
@@ -264,18 +268,18 @@ namespace perkunas
                     Unknown = -1,
                     Keyboard,
                     MouseButton,
-                    MouseMotion,
                     MouseWheel,
+                    MouseMotion,
                     Count
                 };
                 const Type m_type_id = Type::Unknown;
 
              protected:
-                Common(WindowID p_window_id, Type p_type_id) 
-                    : Event(p_window_id)
+                Base(video::WindowID p_window_id, Type p_type_id)
+                    : Common(p_window_id)
                     , m_type_id(p_type_id) {};
             };
-            class Keyboard : public Common
+            class Keyboard : private input::Base
             {
             public:
                 enum class Key
@@ -633,24 +637,25 @@ namespace perkunas
                                                  for array bounds */
                 };
                 enum class Modifier
-                    {
-                        None,
-                        LSHIFT,
-                        RSHIFT,
-                        LCTRL,
-                        RCTRL,
-                        LALT,
-                        RALT,
-                        LGUI,
-                        RGUI,
-                        Num,
-                        Caps,
-                        Mode,
-                        CTRL,
-                        SHIFT,
-                        ALT,
-                        GUI,
-                    };
+                {
+                    None = 0x0000,
+                    LSHIFT = 0x0001,
+                    RSHIFT = 0x0002,
+                    LCTRL = 0x0040,
+                    RCTRL = 0x0080,
+                    LALT = 0x0100,
+                    RALT = 0x0200,
+                    LGUI = 0x0400,
+                    RGUI = 0x0800,
+                    Num = 0x1000,
+                    Caps = 0x2000,
+                    Mode = 0x4000,
+                    Reserved = 0x8000,
+                    SHIFT = LSHIFT | RSHIFT,
+                    CTRL = LCTRL | RCTRL,
+                    ALT = LALT | RALT,
+                    GUI = LGUI | RGUI,
+                };
                 using State = State;
 
                 struct KeyAndState
@@ -663,8 +668,8 @@ namespace perkunas
                         , m_state(p_state) { }
                 };
 
-                explicit Keyboard(WindowID p_window_id, KeyAndState p_key_and_state, Modifier p_modifier)
-                    : Common(p_window_id, Type::Keyboard)
+                explicit Keyboard(video::WindowID p_window_id, KeyAndState p_key_and_state, Modifier p_modifier)
+                    : Base(p_window_id, Type::Keyboard)
                     , m_key_and_state(p_key_and_state)
                     , m_modifier(p_modifier) { }
 
@@ -674,57 +679,89 @@ namespace perkunas
 
             namespace mouse
             {
-                class Button : public Common
+                class Button : private input::Base
                 {
                 public:
                     enum class Code
                     {
                         Unknown = -1,
-                        Left,
+                        Left = 1,
                         Middle,
                         Right,
                         Extra0,
-                        Extra1
+                        Extra1,
+                        Count
                     };
                     using State = State;
                     
-                    explicit Button(WindowID p_window_id, Code p_code, State p_state)
-                        : Common(p_window_id, Type::MouseButton)
+                    explicit Button(video::WindowID p_window_id, Code p_code, State p_state)
+                        : Base(p_window_id, Type::MouseButton)
                         , m_code(p_code)
                         , m_state(p_state) { }
 
                     Code m_code = Code::Unknown;
                     Button::State m_state = Button::State::Unknown;
                 };
-                class Motion : public Common
+                class Motion : private input::Base
                 {
                 public:
-                    typedef Point<int> Coordinate;
-                    typedef Point<int> TravelDistance;
-                    explicit Motion(WindowID p_window_id, 
+                    typedef geometry::Point<int> Coordinate;
+                    typedef geometry::Point<int> TravelDistance;
+                    explicit Motion(video::WindowID p_window_id,
                                     const Coordinate& p_coordinate,
                                     const TravelDistance& p_travel_distance)
-                        : Common(p_window_id, Type::MouseMotion)
+                        : Base(p_window_id, Type::MouseMotion)
                         , m_coordinate(p_coordinate)
                         , m_travel_distance(p_travel_distance) { }
 
                     Coordinate m_coordinate{ 0, 0 };
                     TravelDistance m_travel_distance{ 0, 0 };
                 };
-                class Wheel : public Common
+                class Wheel : private input::Base
                 {
                 public:
-                    typedef Point<int> ScrollAmount;
-                    explicit Wheel(WindowID p_window_id, 
+                    typedef geometry::Point<int> ScrollAmount;
+                    explicit Wheel(video::WindowID p_window_id,
                                    const ScrollAmount& p_coordinate)
-                        : Common(p_window_id, Type::MouseWheel)
+                        : Base(p_window_id, Type::MouseWheel)
                         , m_scroll_amount(p_coordinate) { }
 
                     ScrollAmount m_scroll_amount{ 0, 0 };
                 };
             }
         }
+        namespace callback
+        {
+            class Window
+            {
+            public:
+                virtual void on_window_move(const prk::event::window::Move& event) = 0;
+                virtual void on_window_resize(const prk::event::window::Resize& event) = 0;
+                virtual void on_window_focus(const prk::event::window::Focus& event) = 0;
+                virtual void on_window_status(const prk::event::window::Status& event) = 0;
+                virtual void on_window_visibility(const prk::event::window::Visiblity& event) = 0;
+            };
+
+            class Input
+            {
+            public:
+                virtual void on_keyboard(const prk::event::input::Keyboard& event) = 0;
+                virtual void on_mouse_button(const prk::event::input::mouse::Button& event) = 0;
+                virtual void on_mouse_wheel(const prk::event::input::mouse::Wheel& event) = 0;
+                virtual void on_mouse_motion(const prk::event::input::mouse::Motion& event) = 0;
+            };
+        }
+        namespace concepts
+        {
+            template<typename CallbackType>
+            concept HasWindowCallback = std::is_base_of <callback::Window, CallbackType>::value;
+            template<typename CallbackType>
+            concept HasInputCallback = std::is_base_of <callback::Input, CallbackType>::value;
+            template<typename CallbackType>
+            concept IsCallback = HasWindowCallback<CallbackType> ||
+                                 HasInputCallback<CallbackType>;
+        }
 	}
 }
 
-#endif // !INCLUDED_PERKUNAS_WINDOW_EVENTS
+#endif // !INCLUDED_PERKUNAS_EVENTS

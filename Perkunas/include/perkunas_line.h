@@ -7,11 +7,21 @@
 
 namespace perkunas
 {
-	template<_Arithmethic_concept _Type>
-	struct _Line
+	namespace geometry
 	{
-		Point<_Type> m_start;
-		Point<_Type> m_end;
-	};
+		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		struct Line 
+		{
+			Point<ArithmethicType> m_start;
+			Point<ArithmethicType> m_end;
+
+			template<common::concepts::_Arithmethic_concept _Other_type>
+			operator Line<_Other_type>() noexcept
+			{
+				return { { Point<_Other_type>(m_start) },
+						 { Point<_Other_type>(m_end) } };
+			}
+		};
+	}
 }
 #endif // !INCLUDED_PERKUNAS_LINE_H

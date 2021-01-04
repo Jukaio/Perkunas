@@ -1,3 +1,4 @@
+// perkunas_types.h
 
 #ifndef INCLUDED_PERKUNAS_TYPES
 #define INCLUDED_PERKUNAS_TYPES
@@ -13,28 +14,27 @@
 namespace perkunas
 {
 	/* VIDEO TYPES */
-	typedef uint8_t red_t;
-	typedef uint8_t green_t;
-	typedef uint8_t blue_t;
-	typedef uint8_t alpha_t;
+	namespace video
+	{
+		typedef geometry::Point<int> WindowSize;
+		typedef geometry::Point<int> WindowPosition;
+		typedef geometry::Point<int> Pixel;
+		typedef geometry::Rect<int> WindowRectangle;
+		typedef geometry::Rect<int> Rectangle;
+		typedef geometry::Line<int> Line;
+		typedef std::string WindowTitle;
+		typedef uint32_t WindowID;
 
-	typedef Point<int> WindowSize;
-	typedef Point<int> WindowPosition;
-	typedef Point<int> Pixel;
-
-	typedef Rectangle<int> WindowRectangle;
-	typedef Rectangle<int> DrawRectangle;
-
-	typedef std::string WindowTitle;
-
-	typedef _Line<int> Line;
-	
-	typedef uint32_t WindowID;
+		enum class RectangleStyle
+		{
+			NOT_FILLED,
+			FILLED
+		};
+	}
 	/* !VIDEO TYPES */
 
-	/* INPUT EVENT TYPES */
-	/* !INPUT EVENT TYPES */
 }
+namespace prk = perkunas;
 
 #endif // !INCLUDED_PERKUNAS_TYPES
 

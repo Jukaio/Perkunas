@@ -7,11 +7,18 @@
 
 namespace perkunas
 {
-	template<typename _Number_type>
-	concept _Arithmethic_concept = std::is_arithmetic<_Number_type>::value;
+	namespace common
+	{
+		namespace concepts
+		{
+			template<typename _Number_type>
+			concept _Arithmethic_concept = std::is_arithmetic<_Number_type>::value;
 
-	template<typename _Number_type>
-	concept _Signed_integer_concept = std::is_integral<_Number_type>::value && 
-									  std::is_unsigned<_Number_type>::value;
+			template<typename _Number_type>
+			concept _Signed_integer_concept = std::is_integral<_Number_type>::value && 
+											  std::is_unsigned<_Number_type>::value;
+
+		}
+	}
 }
 #endif // !INCLUDED_PERKUNAS_TEMPLATE_CONCEPTS_H

@@ -1,3 +1,5 @@
+// perkunas_number.h
+// experimental!
 
 #ifndef INCLUDED_PERKUNAS_NUMBER
 #define INCLUDED_PERKUNAS_NUMBER
@@ -6,22 +8,30 @@
 
 namespace perkunas
 {
-	template <_Arithmethic_concept _Type>
-	constexpr _Type max_value()
+	namespace common
 	{
-		return _Type(~0);
-	}
-
-	template<_Arithmethic_concept _Type>
-	struct Number
-	{
-		_Type m_value;
-
-		Number()
-			: m_value(max_value<_Type>())
+		template <common::concepts::_Arithmethic_concept ArithmethicType>
+		constexpr ArithmethicType max_value()
 		{
+			return ArithmethicType(~0);
 		}
 
-	};
+		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		struct Number
+		{
+			ArithmethicType m_value;
+
+			template<common::concepts::_Arithmethic_concept _Other_type>
+			operator _Other_type() noexcept
+			{
+				return static_cast<_Other_type>(m_value);
+			}
+			Number()
+				: m_value(max_value<ArithmethicType>())
+			{
+			}
+
+		};
+	}
 }
 #endif // !INCLUDED_PERKUNAS_NUMBER

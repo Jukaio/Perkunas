@@ -19,7 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Gomoku.cpp" />
+    <ClCompile Include="source\application.cpp" />
+    <ClCompile Include="source\application_input.cpp" />
+    <ClCompile Include="source\FileReader.cc" />
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\application.h" />
+    <ClInclude Include="include\FileReader.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -81,7 +88,8 @@
     <IncludePath>$(ProjectDirDir)libs\include\;$(SolutionDir)Perkunas\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(ProjectDirDir)libs\$(Platform)\;$(SolutionDir)build\Perkunas\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -91,7 +99,8 @@
     <IncludePath>$(ProjectDirDir)libs\include\;$(SolutionDir)Perkunas\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(ProjectDirDir)libs\$(Platform)\;$(SolutionDir)build\Perkunas\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -101,7 +110,8 @@
     <IncludePath>$(ProjectDirDir)libs\include\;$(SolutionDir)Perkunas\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(ProjectDirDir)libs\$(Platform)\;$(SolutionDir)build\Perkunas\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,7 +121,8 @@
     <IncludePath>$(ProjectDirDir)libs\include\;$(SolutionDir)Perkunas\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <LibraryPath>$(ProjectDirDir)libs\$(Platform)\;$(SolutionDir)build\Perkunas\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -123,6 +134,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>All</AssemblerOutput>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,6 +156,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>All</AssemblerOutput>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +178,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>All</AssemblerOutput>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -186,6 +200,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerOutput>All</AssemblerOutput>
+      <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

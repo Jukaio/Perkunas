@@ -7,21 +7,24 @@
 
 namespace perkunas
 {
-	template<_Arithmethic_concept _Type>
-	struct Rectangle
+	namespace geometry
 	{
-		_Type m_x, m_y;
-		_Type m_w, m_h;
-
-		template<_Arithmethic_concept _Other_type>
-		operator Rectangle<_Other_type>() noexcept
+		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		struct Rect
 		{
-			return { static_cast<_Other_type>(m_x), 
-					 static_cast<_Other_type>(m_y),
-					 static_cast<_Other_type>(m_w), 
-					 static_cast<_Other_type>(m_h) };
-		}
-	};
+			ArithmethicType m_x, m_y;
+			ArithmethicType m_w, m_h;
+
+			template<common::concepts::_Arithmethic_concept OtherArithmethicType>
+			operator Rect<OtherArithmethicType>() noexcept
+			{
+				return { static_cast<OtherArithmethicType>(m_x),
+						 static_cast<OtherArithmethicType>(m_y),
+						 static_cast<OtherArithmethicType>(m_w),
+						 static_cast<OtherArithmethicType>(m_h) };
+			}
+		};
+	}
 }
 
 #endif // !INCLUDED_PERKUNAS_RECT_H

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -24,21 +24,20 @@
     <ClInclude Include="include\perkunas_number.h" />
     <ClInclude Include="include\perkunas_types.h" />
     <ClInclude Include="include\perkunas_events.h" />
-    <ClInclude Include="source\perkunas_handle_implementation.h" />
     <ClInclude Include="include\perkunas_line.h" />
     <ClInclude Include="include\perkunas_point.h" />
     <ClInclude Include="include\perkunas_rect.h" />
     <ClInclude Include="include\perkunas_template_concepts.h" />
-    <ClInclude Include="source\perkunas_system.h" />
-    <ClInclude Include="include\pch.h" />
+    <ClInclude Include="include\perkunas" />
+    <ClInclude Include="source\perkunas_internal.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\pch.cpp" />
-    <ClCompile Include="source\perkunas_core.cpp" />
     <ClCompile Include="source\perkunas_event_system.cpp" />
-    <ClCompile Include="source\perkunas_system.cpp" />
-    <ClCompile Include="source\perkunas_types.cpp" />
+    <ClCompile Include="source\perkunas_internal.cpp" />
     <ClCompile Include="source\perkunas_video_system.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
