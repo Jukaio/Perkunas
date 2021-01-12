@@ -11,6 +11,8 @@
 #include <bitset>
 #include <functional>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 class BitMatrix
 {
@@ -44,7 +46,6 @@ public:
 		{
 		}
 	};
-
 
 private:
 	void out_of_dimensions_check(const MyPoint& at) const
@@ -138,10 +139,7 @@ public:
 	{
 		return this->m_data.any();
 	}
-	bool all()
-	{
-		return this->m_data.all();
-	}
+	bool all() const;
 	bool none()
 	{
 		return this->m_data.none();
@@ -156,7 +154,7 @@ public:
 		return !(*this == other);
 	}
 
-	BitMatrix operator&(const BitMatrix& other)
+	BitMatrix operator&(const BitMatrix& other) const
 	{
 		BitMatrix to_return = *this;
 		return to_return &= other;
@@ -169,7 +167,7 @@ public:
 		this->m_data |= other.m_data;
 		return *this;
 	}
-	BitMatrix operator|(const BitMatrix& other)
+	BitMatrix operator|(const BitMatrix& other) const
 	{
 		BitMatrix to_return = *this;
 		return to_return |= other;
@@ -184,12 +182,12 @@ public:
 		this->m_data >>= pos;
 		return *this;
 	}
-	BitMatrix operator<<(size_t pos)
+	BitMatrix operator<<(size_t pos) const
 	{
 		BitMatrix to_return = *this;
 		return to_return <<= pos;
 	}
-	BitMatrix operator>>(size_t pos)
+	BitMatrix operator>>(size_t pos) const
 	{
 		BitMatrix to_return = *this;
 		return to_return >>= pos;
@@ -199,7 +197,6 @@ private:
 	MyLayer m_data;
 	Dimension m_dims;
 };
-
 class BitMatrix::Scanner
 {
 public:
@@ -208,9 +205,19 @@ public:
 	typedef MyPoint Position;
 	typedef MyPoint Dimension;
 
+	Scanner()
+		: m_bits({ 0, 0 })
+		, m_dims({ 0, 0 })
+		, m_start({ 0, 0 })
+		, m_end({ 0, 0 })
+	{
+	}
+
 	Scanner(const Dimension& dimension, Position from, Position to)
 		: m_bits(dimension)
 		, m_dims(calculate_line_dimension(from, to))
+		, m_start(from)
+		, m_end(to)
 	{
 		make_bit_line(from, to);
 	}
@@ -218,6 +225,8 @@ public:
 	Scanner(const BitMatrix& to_scan, Position from, Position to)
 		: m_bits({to_scan.get_dimension()})
 		, m_dims(calculate_line_dimension(from, to))
+		, m_start(from)
+		, m_end(to)
 	{
 		make_bit_line(from, to);
 	}
@@ -257,6 +266,16 @@ public:
 		return m_dims;
 	}
 
+	Position start() const
+	{
+		return m_start;
+	}
+
+	Position end() const
+	{
+		return m_end;
+	}
+
 	void display()
 	{
 		m_bits.display();
@@ -277,25 +296,41 @@ public:
 		}
 	}
 
+	void for_each(std::function<void(const BitMatrix&, Position)> act)
+	{
+		BitMatrix scanner = m_bits;
+		MyPoint full_dim = scanner.get_dimension();
+		for(PointInt y = 0; y < full_dim.m_y - get_dimension().m_y; y++)
+		{
+			for(PointInt x = 0; x < full_dim.m_x - get_dimension().m_x; x++)
+			{
+				act(scanner, {x, y});
+				scanner <<= 1;
+			}
+			scanner <<= get_dimension().m_x;
+		}
+	}
+
+
 private:
+	Position m_start;
+	Position m_end;
 	BitMatrix m_bits;
 	Dimension m_dims;
 };
-
-
 
 class Application
 	: public prk::event::callback::Input
 	, public prk::event::callback::Window
 {
 private:
+	typedef std::chrono::milliseconds Milliseconds;
 	class KeyboardState
 	{
 	public:
 		using Keyboard = prk::event::input::Keyboard;
 		using KeyState = Keyboard::State;
 		using KeyCode = Keyboard::Key;
-
 	private:
 		constexpr static size_t key_count = static_cast<size_t>(KeyCode::CodeCount);
 		std::array<KeyState, key_count> m_current_states;
@@ -371,14 +406,13 @@ private:
 
 	class Gomoku
 	{
-	public:
-		static const uint8_t rows = 15;
-		static const uint8_t columns = 15;
+	public:		
+		//static const uint16_t max_ply = rows * columns;
 
-		enum class State
+		enum class AlgoMode
 		{
-			PlayerTurn,
-			AITurn
+			Minimax,
+			AlpbaBeta
 		};
 
 		enum class Content
@@ -387,6 +421,49 @@ private:
 			Black = false,		// Black = 0
 			White = true,		// White = 1
 		};
+		enum class Turn
+		{
+			Black = false,
+			White = true
+		};
+		enum class Result
+		{
+			None = -1,
+			BlackWins = false,
+			WhiteWins = true,
+			Draw = 2
+		};
+		struct Player
+		{
+			enum class Type
+			{
+				Human = 0,
+				Computer = 1
+			};
+
+			Player(Type type, Result expects, Content uses)
+				: m_type(type)
+				, m_expects(expects)
+				, m_uses(uses)
+			{ }
+			const Type m_type;
+			const Result m_expects;
+			const Content m_uses;
+		};
+
+		struct Black : Player
+		{
+			Black(Type type)
+				: Player(type, Result::BlackWins, Content::Black)
+			{ }
+		};
+		struct White : Player
+		{
+			White(Type type)
+				: Player(type, Result::WhiteWins, Content::White)
+			{ }
+		};
+
 		typedef prk::geometry::Point<int> Position;
 
 		class Board
@@ -418,43 +495,99 @@ private:
 				};
 
 			private:
-				void check_out_of_range(Type at);
+				void check_out_of_range(Type at) const;
 
 			public:
 				State();
 				Layer& operator[](Type at);
+				const Layer& operator[](Type at) const;
 
 			private:
 				Layers m_data;
 			};
 
-			Content has(Position at);
-			Content has(const BitMatrix& with);
+
+			void for_each(std::function<void(BitMatrix::PointInt, BitMatrix::PointInt)> act);
+
+			enum class Bool
+			{
+				False,
+				True,
+				KeepRunning
+			};
+			bool for_each(std::function<Bool(BitMatrix::PointInt, BitMatrix::PointInt)> act, bool if_nothing);
+
+			bool is_empty(Position at);
+			Content has(Position at) const;
+			Content has(const BitMatrix& with) const;
+			bool is_full() const;
+			size_t count(bool value);
 			void reset();
 			void set(Content that, Position at);
 			void display();
+			void display(State::Type type);
 
 		private:
 			State m_state;
 		};
+		
+		typedef Position Move;
+		typedef std::vector<Move> PossibleMoves;
 
-		void set_state(Gomoku::State state)
+		void set_state(Gomoku::Turn state)
 		{
-			m_state = state;
+			m_turn = state;
 		}
 
 		void reset();
-		bool check_win();
-		bool ai_turn(const MouseState& mouse);
+
+		static Result check_outcome(const Board& board);
+		static bool game_over(Board& board);
+
+		Position screen_to_board(MouseState::Motion::Coordinate position);
+		bool is_position_valid(MouseState::Motion::Coordinate position);
+
+		int m_start_ply;
+		Move m_best_move;
+		static PossibleMoves generate_moves(Board board);
+		float goal_function(Board board,  Player player);
+		float minimax(Board board, int depth, bool my_turn);
+		float alphabeta(Board board, int depth, float alpha, float beta, bool my_turn);
+		Move get_best_move(Board board, Player who);
+
+		bool computer_turn(Player player);
+		bool human_turn(const MouseState& mouse, Player player);
+
+		bool decide_turn(Player player, const MouseState& mouse);
+
 		bool is_empty(Position at);
 		void place(Content that, Position at);
-		bool player_turn(const MouseState& mouse);
+		void draw_background(prk::video::System& video);
+
 	public:
+		void center_board(prk::video::System& video);
+
 		void update(const MouseState& mouse);
 		void draw(prk::video::System& video);
 
 	private:
-		State m_state = State::PlayerTurn;
+		// TODO: AI vs AI
+		// Optimise sorting (avoid sorting)
+		// break down functions better
+		static const uint8_t stone_size = 24;
+		static const uint8_t cell_size = 32;
+		static const uint8_t rows = 15; // Gomoku = 15
+		static const uint8_t columns = 15; // Gomoku = 15
+		static const uint8_t max_plays = (rows * columns) - 1;
+		static const uint8_t match_length = 5; // Gomoku = 5
+		static const AlgoMode algo_mode = AlgoMode::AlpbaBeta;
+		static const uint8_t move_cache = 2;
+		static const uint8_t depth_limit = 3;
+
+		Turn m_turn = Turn::Black;
+		Position m_draw_offset{ 0, 0 };
+		Black m_black{ Player::Type::Human };
+		White m_white{ Player::Type::Computer };
 		Board m_board;
 	};
 
