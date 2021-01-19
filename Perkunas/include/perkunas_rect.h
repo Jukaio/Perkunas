@@ -9,14 +9,14 @@ namespace perkunas
 {
 	namespace geometry
 	{
-		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		template<common::concepts::Arithmethic ArithmethicType>
 		struct Rect
 		{
 			ArithmethicType m_x, m_y;
 			ArithmethicType m_w, m_h;
 
-			template<common::concepts::_Arithmethic_concept OtherArithmethicType>
-			operator Rect<OtherArithmethicType>() noexcept
+			template<common::concepts::Arithmethic OtherArithmethicType>
+			operator Rect<OtherArithmethicType>() const noexcept
 			{
 				return { static_cast<OtherArithmethicType>(m_x),
 						 static_cast<OtherArithmethicType>(m_y),

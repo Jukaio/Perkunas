@@ -9,13 +9,13 @@ namespace perkunas
 {
 	namespace geometry
 	{
-		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		template<common::concepts::Arithmethic ArithmethicType>
 		struct Line 
 		{
 			Point<ArithmethicType> m_start;
 			Point<ArithmethicType> m_end;
 
-			template<common::concepts::_Arithmethic_concept _Other_type>
+			template<common::concepts::Arithmethic _Other_type>
 			operator Line<_Other_type>() noexcept
 			{
 				return { { Point<_Other_type>(m_start) },

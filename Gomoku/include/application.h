@@ -364,45 +364,7 @@ private:
 		std::array<ButtonState, key_count> m_prev_states;
 		Motion::Coordinate m_position;
 	};
-	struct Color
-	{
-		int r, g, b, a;
-	};
-	class Grid
-	{
-	public:
-		typedef prk::geometry::Point<int> position_t;
-		typedef prk::geometry::Point<int> dimension_t;
-		typedef prk::video::System video_system_t;
 
-	private:
-		struct Data
-		{
-			position_t pos;
-			dimension_t dim;
-			dimension_t node_dim;
-		};
-
-		struct Node
-		{
-			Color m_color{ 0, 0, 0, 255 };
-		};
-		typedef std::vector<Node> NodeContainer;
-
-		const dimension_t& get_dimension() const;
-		const dimension_t& get_node_dimension() const;
-		const position_t& get_position() const;
-		int get_size() const;
-
-	public:
-		Grid(video_system_t& video, Data data);
-		void draw();
-
-	private:
-		video_system_t& video;
-		Data data;
-		NodeContainer nodes;
-	};
 
 	class Gomoku
 	{
@@ -547,8 +509,6 @@ private:
 		Position screen_to_board(MouseState::Motion::Coordinate position);
 		bool is_position_valid(MouseState::Motion::Coordinate position);
 
-		int m_start_ply;
-		Move m_best_move;
 		static PossibleMoves generate_moves(Board board);
 		float goal_function(Board board,  Player player);
 		float minimax(Board board, int depth, bool my_turn);
@@ -633,6 +593,5 @@ private:
 	MouseState m_mouse{};
 
 	Gomoku m_gomoku{};
-	Grid m_grid;
 };
 #endif // !INCLUDED_APPLICATION_H

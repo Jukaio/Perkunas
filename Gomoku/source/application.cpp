@@ -3,43 +3,6 @@
 #include <algorithm>
 #include <cstring>
 
-Application::Grid::Grid(video_system_t& video, Data data)
-	: data{ data.pos, data.dim, data.node_dim }
-	, video(video)
-{
-	nodes.resize(get_size());
-}
-const Application::Grid::dimension_t& Application::Grid::get_dimension() const { return data.dim; }
-const Application::Grid::dimension_t& Application::Grid::get_node_dimension() const { return data.node_dim; }
-const Application::Grid::position_t& Application::Grid::get_position() const { return data.pos; }
-int Application::Grid::get_size() const { return (data.dim.m_x * data.dim.m_y); }
-
-void Application::Grid::draw()
-{
-	typedef prk::video::RectangleStyle RectStyle;
-
-	const auto dimension = get_dimension();
-	const auto position = get_position();
-	const auto node_dimensions = get_node_dimension();
-
-	for(int x = 0; x < dimension.m_x; x++)
-		for(int y = 0; y < dimension.m_y; y++)
-		{
-			const position_t draw_at
-			{
-				position.m_x + (x * node_dimensions.m_x),
-				position.m_y + (y * node_dimensions.m_y)
-			};
-			video.draw_rectangle(prk::geometry::Rect<int64_t>
-			{
-				draw_at.m_x,
-					draw_at.m_y,
-					node_dimensions.m_x,
-					node_dimensions.m_y
-			},
-								 RectStyle::NOT_FILLED);
-		}
-}
 
 void Application::set_state(State state)
 {
@@ -48,13 +11,12 @@ void Application::set_state(State state)
 
 Application::Application()
 	: m_video("", {})
-	, m_grid(m_video, { {120, 60}, {15, 15}, {32, 32} })
 {
 	set_state(State::Init);
 	m_events.add_callbacks(*this);
 
-	prk::video::WindowRectangle window_rect;
-	prk::video::WindowTitle window_title;
+	prk::video::window::Rectangle window_rect;
+	prk::video::window::Title window_title;
 	try
 	{
 		ini::FileReader reader("settings.ini");
@@ -72,15 +34,20 @@ Application::Application()
 	{
 		printf(exc.what());
 	}
-	m_video.set_window_rectangle(window_rect);
-	m_video.set_window_title(window_title);
-	
+	m_video.set(window_rect);
+	m_video.set(window_title);
+
+	auto title = m_video.get<prk::video::WindowTitle>();
+
 	m_gomoku.center_board(m_video);
 }
 
 void Application::run()
 {
 	set_state(State::Run);
+
+	auto texture = m_video.create_texture("sprite.bmp");
+
 	while(is_running())
 	{
 		update_input();
@@ -88,11 +55,11 @@ void Application::run()
 
 		m_gomoku.update(m_mouse);
 
-		m_video.set_color(prk::common::Color{ 125, 125, 125, 255 });
-		m_video.render_clear();
+		m_video.set(prk::video::Color{ 125, 125, 125, 255 });
+		m_video.clear();
 
 		m_gomoku.draw(m_video);
-		m_video.render_present();
+		m_video.present();
 
 		std::this_thread::sleep_for(Milliseconds{16});
 	}
@@ -682,7 +649,7 @@ void Application::Gomoku::update(const MouseState& mouse)
 
 void Application::Gomoku::center_board(prk::video::System& video)
 {
-	auto window_size = video.get_window_size();
+	auto window_size = video.get<prk::video::window::Size>();
 	Position origin{ window_size.m_x / 2, window_size.m_y / 2 };
 
 	origin.m_x -= (rows * cell_size) / 2;
@@ -693,7 +660,7 @@ void Application::Gomoku::center_board(prk::video::System& video)
 
 void Application::Gomoku::draw_background(prk::video::System& video)
 {
-	video.set_color({ 255, 0, 0, 255 });
+	video.set(prk::video::Color{ 255, 0, 0, 255 });
 
 
 	for(BitMatrix::PointInt y = 0; y < columns; y++)
@@ -714,8 +681,8 @@ void Application::Gomoku::draw_background(prk::video::System& video)
 			prk::geometry::Point<int> start_hori{ (x * cell_size) + consider_offset_x - cell_size, (y * cell_size) + consider_offset_y };
 			prk::geometry::Point<int> end_hori{ outer_x, y * cell_size + consider_offset_y };
 
-			video.draw_line({ start_vert, end_vert });
-			video.draw_line({ start_hori, end_hori });
+			video.draw({ start_vert, end_vert });
+			video.draw({ start_hori, end_hori });
 		}
 	}
 }
@@ -736,20 +703,20 @@ void Application::Gomoku::draw(prk::video::System& video)
 				const int consider_offset_x = m_draw_offset.m_x;
 				const int consider_offset_y = m_draw_offset.m_y;
 
-				prk::video::Rectangle to_draw{ (x * cell_size) + (stone_size / 4) + consider_offset_x,
-											   (y * cell_size) + (stone_size / 4) + consider_offset_y,
+				prk::video::Rectangle to_draw{ (x * cell_size) + (stone_size / 4.0f) + consider_offset_x,
+											   (y * cell_size) + (stone_size / 4.0f) + consider_offset_y,
 											   stone_size, 
 											   stone_size };
 				switch(content)
 				{
 					case Content::Black:
-						video.set_color({ 0, 0, 0, 255 });
-						video.draw_rectangle(to_draw, style);
+						video.set(prk::video::Color{ 0, 0, 0, 255 });
+						video.draw(to_draw);
 						break;
 
 					case Content::White:
-						video.set_color({ 255, 255, 255, 255 });
-						video.draw_rectangle(to_draw, style);
+						video.set(prk::video::Color{ 1.0, 1.0, 1.0, 1.0 });
+						video.draw(to_draw);
 						break;
 				}
 			}

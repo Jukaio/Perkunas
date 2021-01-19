@@ -4,161 +4,170 @@
 
 #include <exception>
 #include <algorithm>
+#include "..\include\perkunas.h"
 
 
 namespace perkunas
 {
     namespace internal
     {
-        // -- BASE SDL INITIALISER -- // 
+        // Ignored Warning 26455: Default Constructors have to throw due to the SDL2 initialization
+        #pragma warning(push)
+        #pragma warning(disable: 26455)
+        namespace init
+        {
+            // -- BASE SDL INITIALISER -- // 
+            constexpr bool is_init_successful(int x) noexcept
+            {
+                return is_successful<SDL_InitState, SDL_InitState::Success>(x);
+            }
 
-        constexpr bool is_init_successful(int x) noexcept
-        {
-            return is_successful<SDL_InitState, SDL_InitState::Success>(x);
+            Timer::Timer()
+            {
+                if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_TIMER)))
+                    throw std::exception(SDL_GetError());
+            }
+            Timer::~Timer() noexcept
+            {
+                SDL_QuitSubSystem(SDL_INIT_TIMER);
+            }
+            Audio::Audio()
+            {
+                if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_AUDIO)))
+                    throw std::exception(SDL_GetError());
+            }
+            Audio::~Audio() noexcept
+            {
+                SDL_QuitSubSystem(SDL_INIT_AUDIO);
+            }
+            Video::Video() 
+            {
+                if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_VIDEO)))
+                    throw std::exception(SDL_GetError());
+            }
+            Video::~Video() noexcept
+            {
+                SDL_QuitSubSystem(SDL_INIT_VIDEO);
+            }
+            Events::Events() 
+            {
+                if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_EVENTS)))
+                    throw std::exception(SDL_GetError());
+            }
+            Events::~Events() noexcept
+            {
+                SDL_QuitSubSystem(SDL_INIT_EVENTS);
+            }
         }
-
-    // Ignored Warning 26455: Default Constructors have to throw due to the SDL2 initialization
-    #pragma warning(push)
-    #pragma warning(disable: 26455)
-        _Timer_init::_Timer_init()
-        {
-            if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_TIMER)))
-                throw std::exception(SDL_GetError());
-        }
-        _Timer_init::~_Timer_init() noexcept
-        {
-            SDL_QuitSubSystem(SDL_INIT_TIMER);
-        }
-        _Audio_init::_Audio_init()
-        {
-            if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_AUDIO)))
-                throw std::exception(SDL_GetError());
-        }
-        _Audio_init::~_Audio_init() noexcept
-        {
-            SDL_QuitSubSystem(SDL_INIT_AUDIO);
-        }
-        _Video_init::_Video_init() 
-        {
-            if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_VIDEO)))
-                throw std::exception(SDL_GetError());
-        }
-        _Video_init::~_Video_init() noexcept
-        {
-            SDL_QuitSubSystem(SDL_INIT_VIDEO);
-        }
-        _Events_init::_Events_init() 
-        {
-            if(not is_init_successful(SDL_InitSubSystem(SDL_INIT_EVENTS)))
-                throw std::exception(SDL_GetError());
-        }
-        _Events_init::~_Events_init() noexcept
-        {
-            SDL_QuitSubSystem(SDL_INIT_EVENTS);
-        }
-    #pragma warning(pop) 
-
+        #pragma warning(pop) 
         // -- END BASE SDL INITIALISER -- // 
     
         // -- VIDEO SYSTEMS -- //
 
-        _Window::_Window(const window_title_t& title, uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept
+        Window::Window(const video::window::Title& title, uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept
         {
             m_window = SDL_CreateWindow(title.c_str(), x, y, w, h, SDL_WINDOW_SHOWN);
         }
-        _Window::~_Window() noexcept
+        Window::~Window() noexcept
         {
             SDL_DestroyWindow(m_window);
         }
-        _Window::_Window(_Window&& p_other) noexcept
+        Window::Window(Window&& p_other) noexcept
         {
             m_window = p_other.m_window;
         }
-        _Window& _Window::operator=(_Window&& p_other) noexcept
+        Window& Window::operator=(Window&& p_other) noexcept
         {
             m_window = p_other.m_window;
             return *this;
         }
-        void _Window::set_title(window_title_t p_title) noexcept
+        void Window::set_title(const video::window::Title& p_title) noexcept
         {
             SDL_SetWindowTitle(m_window, p_title.c_str());
         }
-        window_title_t _Window::get_title()
+        video::window::Title Window::get_title()
         {
-            return window_title_t{ SDL_GetWindowTitle(m_window) };
+            return video::window::Title{ SDL_GetWindowTitle(m_window) };
         }
-        void _Window::set_position(uint16_t x, uint16_t y) noexcept
+        void Window::set_position(uint16_t x, uint16_t y) noexcept
         {
             SDL_SetWindowPosition(m_window, x, y);
         }
-        void _Window::set_size(uint16_t w, uint16_t h) noexcept
+        void Window::set_size(uint16_t w, uint16_t h) noexcept
         {
             SDL_SetWindowSize(m_window, w, h);
         }
-        window_position_t _Window::get_position() const noexcept
+        video::window::Position Window::get_position() const noexcept
         {
             int x, y;
             SDL_GetWindowPosition(m_window, &x, &y);
-            return window_position_t{x, y};
+            return video::window::Position{x, y};
         }
-        window_size_t _Window::get_size() const noexcept
+        video::window::Size Window::get_size() const noexcept
         {
             int w,h;
             SDL_GetWindowSize(m_window, &w, &h);
-            return window_size_t{w, h};
+            return video::window::Size{w, h};
         }
-        void _Window::set_rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept
+        void Window::set_rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept
         {
             set_position(x, y);
             set_size(w, h);
         }
-        window_rectangle_t _Window::get_rectangle() const noexcept
+        video::window::Rectangle Window::get_rectangle() const noexcept
         {
-            window_position_t pos = get_position();
-            window_size_t size = get_size();
-            return window_rectangle_t{ pos.m_x, pos.m_y, size.m_x, size.m_y };
+            video::window::Position pos = get_position();
+            video::window::Size size = get_size();
+            return video::window::Rectangle{ pos.m_x, pos.m_y, size.m_x, size.m_y };
         }
 
-        video::WindowID _Window::get_window_id() const noexcept
+        video::window::ID Window::get_id() const noexcept
         {
             return SDL_GetWindowID(m_window);
         }
 
-        _Renderer::_Renderer(const _Window& p_window_base)
+        Renderer::Renderer(const Window& p_window_base)
         {
-            m_renderer = SDL_CreateRenderer(p_window_base.m_window, __Renderer_counter::count(), SDL_RENDERER_SOFTWARE);
-            if(not m_renderer)
+            m_data = SDL_CreateRenderer(p_window_base.m_window, __Renderer_counter::count(), SDL_RENDERER_SOFTWARE);
+            if(not m_data)
                 throw std::exception(SDL_GetError());
             __Renderer_counter::increment();
         }
-        _Renderer::~_Renderer() noexcept
+        Renderer::~Renderer() noexcept
         {
             __Renderer_counter::decrement();
-            SDL_DestroyRenderer(m_renderer);
+            SDL_DestroyRenderer(m_data);
         }
-        _Renderer::_Renderer(_Renderer&& p_other) noexcept
+        Renderer::Renderer(Renderer&& p_other) noexcept
         {
-            m_renderer = p_other.m_renderer;
+            m_data = p_other.m_data;
         }
-        _Renderer& _Renderer::operator=(_Renderer&& p_other) noexcept
+        Renderer& Renderer::operator=(Renderer&& p_other) noexcept
         {
-            m_renderer = p_other.m_renderer;
+            m_data = p_other.m_data;
             return *this;
         }
-        void _Renderer::set_color(common::Color::red_t r, 
-                                  common::Color::green_t g, 
-                                  common::Color::blue_t b, 
-                                  common::Color::alpha_t a) noexcept
+  
+        void Renderer::set_color(video::Color::uintx_t r,
+                                 video::Color::uintx_t g,
+                                 video::Color::uintx_t b,
+                                 video::Color::uintx_t a) noexcept
         {
-            SDL_SetRenderDrawColor(m_renderer, r, g, b, a);
+            SDL_SetRenderDrawColor(m_data, r, g, b, a);
         }
-        void _Renderer::clear() noexcept
+        video::Color Renderer::get_color() noexcept
         {
-            SDL_RenderClear(m_renderer);
+            video::Color::uintx_t r, g, b, a;
+            SDL_GetRenderDrawColor(m_data, &r, &g, &b, &a);
+            return video::Color{r, g, b, a};
         }
-        void _Renderer::present() noexcept
+        void Renderer::clear() noexcept
         {
-            SDL_RenderPresent(m_renderer);
+            SDL_RenderClear(m_data);
+        }
+        void Renderer::present() noexcept
+        {
+            SDL_RenderPresent(m_data);
         }
 
         // -- !VIDEO SYSTEMS -- //
@@ -244,6 +253,50 @@ namespace perkunas
             }
         }
 
-    }
+        Surface::Surface(const common::FilePath& at)
+        {
+            m_data = SDL_LoadBMP(at.string().c_str());
+        }
+
+        Surface::~Surface()
+        {
+            check_valid();
+            SDL_FreeSurface(m_data);
+        }
+
+        bool Surface::is_vaild()
+        {
+            return m_data != nullptr;
+        }
+
+        void Surface::check_valid()
+        {
+            if(not is_vaild())
+                throw std::runtime_error("Surface not valid\n");
+        }
+
+        Texture::Texture(const Renderer& with, const Surface& that)
+        {
+            m_data = SDL_CreateTextureFromSurface(with, that);
+        }
+
+        Texture::~Texture()
+        {
+            check_valid();
+            SDL_DestroyTexture(m_data);
+        }
+
+        bool Texture::is_vaild()
+        {
+            return m_data != nullptr;
+        }
+
+        void Texture::check_valid()
+        {
+            if(not is_vaild())
+                throw std::runtime_error("Texture not valid\n");
+        }
+
+}
 }
 

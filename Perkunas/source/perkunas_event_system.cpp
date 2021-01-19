@@ -11,7 +11,7 @@ namespace perkunas
 	namespace event
 	{
 		System::System()
-			: m_impl(std::make_unique<_EventImpl>())
+			: m_impl(std::make_unique<Impl>())
 		{
 
 		}
@@ -22,7 +22,7 @@ namespace perkunas
 
 
 		typedef std::function <void(const SDL_Event&)> ConvertSDLFunction;
-		class System::_EventImpl : public internal::_Events_init
+		class System::Impl : public internal::init::Events
 		{
 		private:
 			typedef callback::Window WindowCallback;
@@ -79,7 +79,7 @@ namespace perkunas
 
 					return MoveEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						Position
 						{
 							p_external_event.window.data1,
@@ -94,7 +94,7 @@ namespace perkunas
 
 					return ResizeEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						Size
 						{
 							p_external_event.window.data1,
@@ -109,7 +109,7 @@ namespace perkunas
 
 					return VisibilityEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						static_cast<TypeID>(p_external_event.window.event)
 					};
 				}
@@ -120,7 +120,7 @@ namespace perkunas
 
 					return StatusEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						static_cast<TypeID>(p_external_event.window.event)
 					};
 				}
@@ -131,7 +131,7 @@ namespace perkunas
 
 					return FocusEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						static_cast<TypeID>(p_external_event.window.event)
 					};
 				}
@@ -199,7 +199,7 @@ namespace perkunas
 
 					return KeyboardEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						KeyboardEvent::KeyAndState
 						{
 							static_cast<Key>(p_external_event.key.keysym.scancode),
@@ -216,7 +216,7 @@ namespace perkunas
 
 					return MouseButtonEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						static_cast<Code>(p_external_event.button.button),
 						static_cast<State>(p_external_event.button.state)
 					};
@@ -229,7 +229,7 @@ namespace perkunas
 
 					return MouseMotionEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						Coordinate
 						{
 							p_external_event.motion.x,
@@ -249,7 +249,7 @@ namespace perkunas
 
 					return MouseWheelEvent
 					{
-						static_cast<video::WindowID>(p_external_event.window.windowID),
+						static_cast<video::window::ID>(p_external_event.window.windowID),
 						ScrollAmount
 						{
 							p_external_event.wheel.x,
@@ -290,8 +290,8 @@ namespace perkunas
 			const ConvertSDLFunction(&event_conversion_lookup)[SDL_EventType::SDL_LASTEVENT] = generate_lookup();
 
 		public:
-			_EventImpl() = default;
-			~_EventImpl() = default;
+			Impl() = default;
+			~Impl() = default;
 
 			void add_window_callbacks(WindowCallback* p_callback)
 			{
@@ -317,11 +317,11 @@ namespace perkunas
 				(*m_impl)(ev);
 			}
 		}
-		void System::add_window_callbacks(event::callback::Window& p_callback)
+		void System::add_callback(event::callback::Window& p_callback)
 		{
 			m_impl->add_window_callbacks(&p_callback);
 		}
-		void System::add_input_callbacks(event::callback::Input& p_callback)
+		void System::add_callback(event::callback::Input& p_callback)
 		{
 			m_impl->add_input_callbacks(&p_callback);
 		}

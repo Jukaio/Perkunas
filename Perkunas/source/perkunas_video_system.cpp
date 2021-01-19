@@ -1,15 +1,34 @@
 
 #include "perkunas.h"
 #include "perkunas_internal.h"
+#include <map>
+#include <typeinfo>
 
 namespace perkunas
 {
 	namespace video
 	{
-		class System::_VideoImpl : public internal::_Video_init
+		class Texture::Impl : public internal::Texture
 		{
 		public:
-			_VideoImpl(const WindowTitle& p_title, const WindowRectangle& p_rect)
+			Impl() = default;
+			Impl(const internal::Renderer& sys, const common::FilePath& at)
+				: internal::Texture(sys, internal::Surface(at))
+			{ }
+		};
+
+		Texture::Texture()
+		{
+		}
+
+		Texture::~Texture() // Required for the pointer to implementation
+		{
+		}
+
+		class System::Impl : public internal::init::Video
+		{
+		public:
+			Impl(const video::window::Title& p_title, const video::window::Rectangle& p_rect)
 				: m_window(p_title,
 							static_cast<uint16_t>(p_rect.m_x),
 							static_cast<uint16_t>(p_rect.m_y),
@@ -20,12 +39,19 @@ namespace perkunas
 
 			}
 
-			internal::_Window m_window;
-			internal::_Renderer m_renderer;
+			RectangleStyle m_rect_style{RectangleStyle::FILLED};
+			internal::Window m_window;
+			internal::Renderer m_renderer;
+
 		};
 
-		System::System(WindowTitle p_title, const WindowRectangle& p_rect)
-			: m_impl(std::make_unique<_VideoImpl>(p_title, p_rect))
+		Sprite::Sprite(const Texture& use, const Rectangle& at)
+			: m_image(use)
+			, m_source(at)
+		{ }
+
+		System::System(const video::window::Title& p_title, const video::window::Rectangle& p_rect)
+			: m_impl(std::make_unique<Impl>(p_title, p_rect))
 		{
 
 		}
@@ -33,43 +59,32 @@ namespace perkunas
 		{
 
 		}
+		Texture System::create_texture(const common::FilePath& at)
+		{
+			Texture texture;
+			texture.m_impl = std::make_shared<Texture::Impl>(m_impl->m_renderer, at);
+			return texture;
+		}
 
-		void System::set_window_title(WindowTitle p_title)
+		void System::set(const video::window::Title& p_title)
 		{
 			m_impl->m_window.set_title(p_title);
 		}
 
-		WindowTitle System::get_window_title() const
-		{
-			return m_impl->m_window.get_title();
-		}
-
-		void System::set_window_position(const WindowPosition& p_position) 
+		void System::set(const video::window::Position& p_position)
 		{
 			m_impl->m_window.set_position(static_cast<uint16_t>(p_position.m_x),
 										   static_cast<uint16_t>(p_position.m_y));
 		}
 
-		void System::set_window_size(const WindowSize& p_size)
+		void System::set(const video::window::Size& p_size)
 		{
 			m_impl->m_window.set_size(static_cast<uint16_t>(p_size.m_x),
-														  static_cast<uint16_t>(p_size.m_y));
+									  static_cast<uint16_t>(p_size.m_y));
 
 		}
 
-		WindowPosition System::get_window_position() const
-		{
-			internal::window_position_t position = m_impl->m_window.get_position();
-			return WindowPosition{ position.m_x, position.m_y };
-		}
-
-		WindowSize System::get_window_size() const
-		{
-			internal::window_size_t size = m_impl->m_window.get_size();
-			return WindowSize{ size.m_x, size.m_y };
-		}
-
-		void System::set_window_rectangle(const WindowRectangle& p_rect)
+		void System::set(const video::window::Rectangle& p_rect)
 		{
 			m_impl->m_window.set_rectangle(static_cast<uint16_t>(p_rect.m_x),
 															   static_cast<uint16_t>(p_rect.m_y),
@@ -77,39 +92,80 @@ namespace perkunas
 															   static_cast<uint16_t>(p_rect.m_h));
 		}
 
-		WindowRectangle System::get_window_rectangle() const
-		{
-			internal::window_rectangle_t rect = m_impl->m_window.get_rectangle();
-			return WindowRectangle{ rect.m_x, rect.m_y, rect.m_w, rect.m_h };
-		}
-		WindowID System::get_window_id() const
-		{
-			return m_impl->m_window.get_window_id();
-		}
-
-		void System::render_clear()
+		void System::clear()
 		{
 			m_impl->m_renderer.clear();
 		}
-		void System::render_present()
+		void System::present()
 		{
 			m_impl->m_renderer.present();
 		}
-		void System::set_color(common::Color p_color)
+		void System::set(const video::Color& p_color)
 		{
 			m_impl->m_renderer.set_color(p_color.red, p_color.green, p_color.blue, p_color.alpha);
 		}
-		void System::draw_rectangle(const Rectangle& p_rect, RectangleStyle p_style)
+		void System::set(video::RectangleStyle that)
 		{
-			m_impl->m_renderer.draw(p_rect, static_cast<bool>(p_style));
+			m_impl->m_rect_style = that;
 		}
-		void System::draw_pixel(const Pixel& p_pixel)
+		void System::draw(const Rectangle& p_rect)
+		{
+			m_impl->m_renderer.draw(p_rect, m_impl->m_rect_style == RectangleStyle::FILLED);
+		}
+		void System::draw(const Pixel& p_pixel)
 		{
 			m_impl->m_renderer.draw(p_pixel);
 		}
-		void System::draw_line(const Line& p_line)
+		void System::draw(const Line& p_line)
 		{
 			m_impl->m_renderer.draw(p_line);
+		}
+
+		void System::draw(const Texture& that)
+		{
+			m_impl->m_renderer.draw(*that.m_impl);
+		}
+
+		void System::draw(const Sprite& that, const TargetRectangle& at)
+		{
+			auto& texture = that.m_image;
+			auto& source = that.m_source;
+			m_impl->m_renderer.draw(*texture.m_impl, source, at);
+		}
+
+		template<>
+		video::window::Title System::get() const
+		{
+			return m_impl->m_window.get_title();
+		}
+		template<>
+		video::window::ID System::get() const
+		{
+			return m_impl->m_window.get_id();
+		}
+		template<>
+		video::window::Position System::get() const
+		{
+			return m_impl->m_window.get_position();
+		}
+		template<>
+		video::window::Size System::get() const
+		{
+			return m_impl->m_window.get_size();
+		}
+		template<>
+		video::window::Rectangle System::get() const
+		{
+			return m_impl->m_window.get_rectangle();
+		}
+		template<> 
+		video::RectangleStyle System::get() const
+		{
+			return m_impl->m_rect_style;
+		}
+		template<> video::Color System::get() const
+		{
+			return m_impl->m_renderer.get_color();
 		}
 	}
 }

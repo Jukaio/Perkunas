@@ -21,63 +21,105 @@ namespace perkunas
 			System();
 			~System();
 
-			// TODO: Does not work due to compile time
-			// Using pointers is a must do, so the compiler
-			// Won't cry about classes
-			// They all could also share a bse callback class
-			void add_window_callbacks(event::callback::Window&);
-			void add_input_callbacks(event::callback::Input&);
-
-			template<event::concepts::IsCallback ArithmethicType>
-			void add_callbacks(ArithmethicType& p_callback)
+			template<event::concepts::IsCallback CallbackType>
+			void add_callbacks(CallbackType& p_callback)
 			{
-				if(event::concepts::HasInputCallback<ArithmethicType>)
-					add_input_callbacks(dynamic_cast<event::callback::Input&>(p_callback));
-				if(event::concepts::HasWindowCallback<ArithmethicType>)
-					add_window_callbacks(dynamic_cast<event::callback::Window&>(p_callback));
+				if(event::concepts::HasInputCallback<CallbackType>)
+					add_callback(dynamic_cast<event::callback::Input&>(p_callback));
+				if(event::concepts::HasWindowCallback<CallbackType>)
+					add_callback(dynamic_cast<event::callback::Window&>(p_callback));
 			}
 
 			void poll();
 
 		private:
-			class _EventImpl;
-			std::unique_ptr<_EventImpl> m_impl;
+			void add_callback(event::callback::Window&);
+			void add_callback(event::callback::Input&);
+
+			class Impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 	}
 
 	namespace video
 	{
+		class System;
+		class Texture
+		{
+			friend System;
+		public:
+			Texture();
+			~Texture();
+
+		private:
+			class Impl;
+			std::shared_ptr<Impl> m_impl = nullptr;
+		};
+
+		class Sprite
+		{
+			friend System;
+		public:
+			typedef geometry::Rect<int> Rect;
+
+			Sprite() = default;
+			Sprite(const Texture&, const Rectangle&);
+		private:
+			Texture m_image{};
+			Rect m_source{};
+		};
+
 		class System
 		{
 		public:
-			System(WindowTitle, const WindowRectangle&);
+			System(const video::window::Title&, const video::window::Rectangle&);
 			~System();
 
-			// Window Methods
-			void set_window_title(WindowTitle);
-			void set_window_position(const WindowPosition&);
-			void set_window_size(const WindowSize&);
-			void set_window_rectangle(const WindowRectangle&);
-			WindowTitle get_window_title() const;
-			WindowPosition get_window_position() const;
-			WindowSize get_window_size() const;
-			WindowRectangle get_window_rectangle() const;
-			WindowID get_window_id() const;
+			Texture create_texture(const common::FilePath&);
 
-			// Render Methods
-			void set_color(common::Color); // TODO: Colour type
-			void draw_rectangle(const Rectangle&, RectangleStyle);
-			void draw_pixel(const Pixel&);
-			void draw_line(const Line&);
+			// Setters
+			// Window
+			void set(const video::window::Title&);
+			void set(const video::window::Position&);
+			void set(const video::window::Size&);
+			void set(const video::window::Rectangle&);
+			// Render
+			void set(const video::Color&);
+			void set(video::RectangleStyle);
+			// !Setters
 
+			// Generic getter template
+			template<video::GetterTypes ToGet>
+			ToGet get() const
+			{
+				// TODO: Throw - if it throws it is library error, never user error
+				// Unless the user changed the WindowTypes concept
+				return ToGet{};
+			}
+			// !Generic getters
 
-			void render_clear();
-			void render_present();
+			void draw(const Rectangle&);
+			void draw(const Pixel&);
+			void draw(const Line&);
+			void draw(const Texture&);
+			void draw(const Sprite&, const TargetRectangle&);
+
+			void clear();
+			void present();
 
 		private:
-			class _VideoImpl;
-			std::unique_ptr<_VideoImpl> m_impl;
+			class Impl;
+			std::unique_ptr<Impl> m_impl;
 		};
+
+		// Explicit getter instantiations
+		extern template video::window::Title System::get() const;
+		extern template video::window::Position System::get() const;
+		extern template video::window::Size System::get() const;
+		extern template video::window::Rectangle System::get() const;
+		extern template video::window::ID System::get() const;
+		extern template video::RectangleStyle System::get() const;
+		extern template video::Color System::get() const;
 	}
 }
 #endif // !INCLUDED_PERKUNAS_H

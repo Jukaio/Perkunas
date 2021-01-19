@@ -11,13 +11,25 @@ namespace perkunas
 	{
 		namespace concepts
 		{
-			template<typename _Number_type>
-			concept _Arithmethic_concept = std::is_arithmetic<_Number_type>::value;
+			template<typename NumberType>
+			concept Arithmethic = std::is_arithmetic<NumberType>::value ||
+								  std::is_same<NumberType, std::nullptr_t>::value;
 
-			template<typename _Number_type>
-			concept _Signed_integer_concept = std::is_integral<_Number_type>::value && 
-											  std::is_unsigned<_Number_type>::value;
+			template<typename NumberType>
+			concept Integer = std::is_integral<NumberType>::value &&
+							  !std::is_floating_point<NumberType>::value;
 
+			template<typename NumberType>
+			concept UnsignedInteger = concepts::Integer<NumberType> && 
+									  std::is_unsigned<NumberType>::value;
+
+			template <class NumberType>
+			concept DecimalNumber = std::is_floating_point<NumberType>::value && 
+									!std::is_integral<NumberType>::value;
+
+			template<typename NumberType>
+			concept ColorBaseInt = concepts::UnsignedInteger<NumberType> &&
+								   (sizeof(NumberType) % (sizeof(uint8_t) * 4)) == 0;
 		}
 	}
 }

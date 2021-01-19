@@ -10,18 +10,18 @@ namespace perkunas
 {
 	namespace common
 	{
-		template <common::concepts::_Arithmethic_concept ArithmethicType>
+		template <common::concepts::Arithmethic ArithmethicType>
 		constexpr ArithmethicType max_value()
 		{
 			return ArithmethicType(~0);
 		}
 
-		template<common::concepts::_Arithmethic_concept ArithmethicType>
+		template<common::concepts::Arithmethic ArithmethicType>
 		struct Number
 		{
 			ArithmethicType m_value;
 
-			template<common::concepts::_Arithmethic_concept _Other_type>
+			template<common::concepts::Arithmethic _Other_type>
 			operator _Other_type() noexcept
 			{
 				return static_cast<_Other_type>(m_value);

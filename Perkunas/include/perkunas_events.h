@@ -101,9 +101,9 @@ namespace perkunas
         class Common 
         {
         public:
-            Common(video::WindowID p_window_id) 
+            Common(video::window::ID p_window_id)
                 : m_window_id(p_window_id) {}
-            video::WindowID m_window_id { static_cast<video::WindowID>(~0) };
+            video::window::ID m_window_id { static_cast<video::window::ID>(~0) };
             virtual ~Common() = default;
         };
         namespace window
@@ -151,7 +151,7 @@ namespace perkunas
                 };
                 const Type m_type_id = Type::Unknown;
 
-                Base(video::WindowID p_window_id, Type p_type_id) 
+                Base(video::window::ID p_window_id, Type p_type_id) 
                     : Common(p_window_id)
                     , m_type_id(p_type_id) {};
             };
@@ -166,7 +166,7 @@ namespace perkunas
                 };
                 ID m_id;
 
-                explicit Visiblity(video::WindowID p_window_id, ID p_id)
+                explicit Visiblity(video::window::ID p_window_id, ID p_id)
                     : Base(p_window_id, Type::Status)
                     , m_id(p_id) { };
             };
@@ -176,7 +176,7 @@ namespace perkunas
                 typedef geometry::Point<int> Position;
                 Position m_position;
 
-                explicit Move(video::WindowID p_window_id,
+                explicit Move(video::window::ID p_window_id,
                               const Position& p_position)
                     : Base(p_window_id, Type::Move)
                     , m_position(p_position) { };
@@ -187,7 +187,7 @@ namespace perkunas
                 typedef geometry::Point<int> Size;
                 Size m_size;
 
-                explicit Resize(video::WindowID p_window_id, const Size& p_size)
+                explicit Resize(video::window::ID p_window_id, const Size& p_size)
                     : Base(p_window_id, Type::Size)
                     , m_size(p_size) { };
             };
@@ -203,7 +203,7 @@ namespace perkunas
                 };
                 ID m_id;
 
-                explicit Status(video::WindowID p_window_id, ID p_id)
+                explicit Status(video::window::ID p_window_id, ID p_id)
                     : Base(p_window_id, Type::Status)
                     , m_id(p_id) { };
             };
@@ -219,7 +219,7 @@ namespace perkunas
                 };
                 ID m_id;
 
-                explicit Focus(video::WindowID p_window_id, ID p_id)
+                explicit Focus(video::window::ID p_window_id, ID p_id)
                     : Base(p_window_id, Type::Focus)
                     , m_id(p_id) {};
             };
@@ -275,7 +275,7 @@ namespace perkunas
                 const Type m_type_id = Type::Unknown;
 
              protected:
-                Base(video::WindowID p_window_id, Type p_type_id)
+                Base(video::window::ID p_window_id, Type p_type_id)
                     : Common(p_window_id)
                     , m_type_id(p_type_id) {};
             };
@@ -668,7 +668,7 @@ namespace perkunas
                         , m_state(p_state) { }
                 };
 
-                explicit Keyboard(video::WindowID p_window_id, KeyAndState p_key_and_state, Modifier p_modifier)
+                explicit Keyboard(video::window::ID p_window_id, KeyAndState p_key_and_state, Modifier p_modifier)
                     : Base(p_window_id, Type::Keyboard)
                     , m_key_and_state(p_key_and_state)
                     , m_modifier(p_modifier) { }
@@ -694,7 +694,7 @@ namespace perkunas
                     };
                     using State = State;
                     
-                    explicit Button(video::WindowID p_window_id, Code p_code, State p_state)
+                    explicit Button(video::window::ID p_window_id, Code p_code, State p_state)
                         : Base(p_window_id, Type::MouseButton)
                         , m_code(p_code)
                         , m_state(p_state) { }
@@ -707,7 +707,7 @@ namespace perkunas
                 public:
                     typedef geometry::Point<int> Coordinate;
                     typedef geometry::Point<int> TravelDistance;
-                    explicit Motion(video::WindowID p_window_id,
+                    explicit Motion(video::window::ID p_window_id,
                                     const Coordinate& p_coordinate,
                                     const TravelDistance& p_travel_distance)
                         : Base(p_window_id, Type::MouseMotion)
@@ -721,7 +721,7 @@ namespace perkunas
                 {
                 public:
                     typedef geometry::Point<int> ScrollAmount;
-                    explicit Wheel(video::WindowID p_window_id,
+                    explicit Wheel(video::window::ID p_window_id,
                                    const ScrollAmount& p_coordinate)
                         : Base(p_window_id, Type::MouseWheel)
                         , m_scroll_amount(p_coordinate) { }

@@ -51,80 +51,6 @@ namespace perkunas
 {
 	namespace internal
 	{
-		namespace experimental
-		{
-			constexpr uint8_t BOOL_FALSE_INDEX = 0;
-			constexpr uint8_t BOOL_TRUE_INDEX = 1;
-			constexpr uint8_t BOOL_VALUE_SIZE = 2;
-			struct StatementFunction
-			{
-				void operator()(bool expression, const std::function<void(void)>& function, const std::function<void(void)>& false_function = []() {})
-				{
-					static std::function<void(void)> lookup[BOOL_VALUE_SIZE] =
-					{
-						false_function,
-						function
-					};
-	// Ignored warning 26446: expression will never be out of bounds, no need for .at() 
-	// Ignored warning 26482: bool expression never bigger than 1
-	#pragma warning(push)
-	#pragma warning(disable: 26446)
-	#pragma warning(disable: 26482)
-					lookup[expression]();
-	#pragma warning(pop) 
-				}
-			};
-
-			struct BranchlessIfElse
-			{
-				BranchlessIfElse(std::function<void(void)>(&functions)[BOOL_VALUE_SIZE])
-					: m_functions{ functions[BOOL_FALSE_INDEX], functions[BOOL_TRUE_INDEX] }
-				{
-			
-				}
-				std::function<void(void)> m_functions[BOOL_VALUE_SIZE];
-
-				void operator()(bool expression)
-				{
-	#pragma warning(push)
-	#pragma warning(disable: 26446)
-	#pragma warning(disable: 26482)
-					m_functions[expression]();
-	#pragma warning(pop) 
-				}
-			};
-			/*
-			BranchlessIfElse test { if_else };
-			test(p_filled); */
-
-			class Branchless
-			{ 
-			public:
-				Branchless() = default;
-
-				static void IF(bool expression, const std::function<void(void)>& function)
-				{
-					StatementFunction if_statement;
-					if_statement(expression, function);
-				}
-
-				static void IF_ELSE(bool expression, 
-									const std::function<void(void)>& true_function, 
-									const std::function<void(void)>& false_function)
-				{
-					StatementFunction if_statement;
-					if_statement(expression, true_function, false_function);
-				}
-				static void IF_ELSE(bool expression,
-									const std::function<void(void)> (&functions)[BOOL_VALUE_SIZE])
-				{
-					StatementFunction if_statement;
-					if_statement(expression, functions[BOOL_TRUE_INDEX], functions[BOOL_FALSE_INDEX]);
-				}
-			}; /* Small idea for a branchless if using a lookup table */
-			//Branchless::IF(p_filled, [this]() { printf("Oh, Hello\n"); });
-		}
-
 		enum class SystemType
 		{
 			Video = SDL_INIT_VIDEO,
@@ -151,8 +77,8 @@ namespace perkunas
 			}
 		};
 
-		template<typename _Type>
-		struct _Type_counter
+		template<typename Type>
+		struct TypeCounter
 		{
 			static void increment() noexcept
 			{
@@ -172,181 +98,233 @@ namespace perkunas
 		private:
 			inline static int m_counter = 0;
 		};
-		template<typename _Type>
-		class _Unique_existor : _Type_counter<_Unique_existor<_Type>>
+		template<typename Type>
+		class UniqueExistor : TypeCounter<UniqueExistor<Type>>
 		{
-			typedef _Type_counter<_Unique_existor<_Type>> __This_type_counter;
+			typedef TypeCounter<UniqueExistor<Type>> My_TypeCounter;
 
 		public:
-			_Unique_existor() noexcept
+			UniqueExistor() noexcept
 			{
-				if(__This_type_counter::count())
+				if(My_TypeCounter::count())
 				{
-					std::string type_name = (typeid(_Type).name());
+					std::string type_name = (typeid(Type).name());
 					std::string error_message = "_One_time_system_existor->too many instances of type :" + type_name;
 					Error::print_error_message(error_message);
 					assert(!"ERROR: ONLY ONE INSTANCE OF TYPENAME _TYPE IS ALLOWED TO EXIST!");
 				}
-				__This_type_counter::increment();
+				My_TypeCounter::increment();
 			}
-			~_Unique_existor() noexcept
+			~UniqueExistor() noexcept
 			{
-				__This_type_counter::decrement();
+				My_TypeCounter::decrement();
 			}
 		
 		private:
-			_Unique_existor(const _Unique_existor&) = delete;
-			_Unique_existor(_Unique_existor&&) = delete;
-			_Unique_existor& operator=(const _Unique_existor&) = delete;
-			_Unique_existor& operator=(_Unique_existor&&) = delete;
+			UniqueExistor(const UniqueExistor&) = delete;
+			UniqueExistor(UniqueExistor&&) = delete;
+			UniqueExistor& operator=(const UniqueExistor&) = delete;
+			UniqueExistor& operator=(UniqueExistor&&) = delete;
 		};
 
-		class _Timer_init : _Unique_existor<_Timer_init>
+		namespace init
+		{
+			class Timer : UniqueExistor<Timer>
+			{
+			public:
+				Timer();
+				~Timer() noexcept;
+
+			private:
+				Timer(const Timer&) = delete;
+				Timer(Timer&&) = delete;
+				Timer& operator=(const Timer&) = delete;
+				Timer& operator=(Timer&&) = delete;
+			};
+
+			class Audio : UniqueExistor<Audio>
+			{
+			public:
+				Audio();
+				~Audio() noexcept;
+
+			private:
+				Audio(const Audio&) = delete;
+				Audio(Audio&&) = delete;
+				Audio& operator=(const Audio&) = delete;
+				Audio& operator=(Audio&&) = delete;
+			};
+
+			class Video
+			{
+			public:
+				Video();
+				~Video() noexcept;
+			};
+
+			class Events : UniqueExistor<Events>
+			{
+			public:
+				Events();
+				~Events() noexcept;
+
+			private:
+				Events(const Events&) = delete;
+				Events(Events&&) = delete;
+				Events& operator=(const Events&) = delete;
+				Events& operator=(Events&&) = delete;
+			};
+		}
+
+		class Surface
 		{
 		public:
-			_Timer_init();
-			~_Timer_init() noexcept;
+			Surface(const common::FilePath&);
+			~Surface();
+
+			operator SDL_Surface*() const
+			{
+				return m_data;
+			}
 
 		private:
-			_Timer_init(const _Timer_init&) = delete;
-			_Timer_init(_Timer_init&&) = delete;
-			_Timer_init& operator=(const _Timer_init&) = delete;
-			_Timer_init& operator=(_Timer_init&&) = delete;
+			bool is_vaild();
+			void check_valid();
+
+			SDL_Surface* m_data = nullptr;
 		};
 
-		class _Audio_init : _Unique_existor<_Audio_init>
+		class Renderer;
+		class Texture
 		{
 		public:
-			_Audio_init();
-			~_Audio_init() noexcept;
+			Texture() = default;
+			Texture(const Renderer&, const Surface&);
+			~Texture();
+
+			operator SDL_Texture*() const
+			{
+				return m_data;
+			}
+
+		protected:
+			bool is_vaild();
+			void check_valid();
 
 		private:
-			_Audio_init(const _Audio_init&) = delete;
-			_Audio_init(_Audio_init&&) = delete;
-			_Audio_init& operator=(const _Audio_init&) = delete;
-			_Audio_init& operator=(_Audio_init&&) = delete;
+			SDL_Texture* m_data = nullptr;
 		};
 
-		class _Video_init
+		class Window
 		{
+			friend Renderer;
 		public:
-			_Video_init();
-			~_Video_init() noexcept;
-		};
+			Window(const video::window::Title& title, uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept;
+			~Window() noexcept;
 
-		class _Events_init : _Unique_existor<_Events_init>
-		{
-		public:
-			_Events_init();
-			~_Events_init() noexcept;
+			Window(Window&& p_other) noexcept;
+			Window& operator=(Window&& p_other) noexcept;
 
 		private:
-			_Events_init(const _Events_init&) = delete;
-			_Events_init(_Events_init&&) = delete;
-			_Events_init& operator=(const _Events_init&) = delete;
-			_Events_init& operator=(_Events_init&&) = delete;
-		};
-
-		typedef std::string window_title_t;
-		typedef const geometry::Point<int> window_size_t;
-		typedef const geometry::Point<int> window_position_t;
-		typedef const geometry::Rect<int> window_rectangle_t;
-
-		class _Renderer;
-		class _Window
-		{
-			friend _Renderer;
-		public:
-			_Window(const window_title_t& title, uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept;
-			~_Window() noexcept;
-
-			_Window(_Window&& p_other) noexcept;
-			_Window& operator=(_Window&& p_other) noexcept;
-
-		private:
-			_Window(const _Window&) = delete;
-			_Window& operator=(const _Window&) = delete;
+			Window(const Window&) = delete;
+			Window& operator=(const Window&) = delete;
 
 		public:
-			void set_title(window_title_t p_title) noexcept;
-			window_title_t get_title();
+			void set_title(const video::window::Title& p_title) noexcept;
+			video::window::Title get_title();
 
 			void set_position(uint16_t x, uint16_t y) noexcept;
 			void set_size(uint16_t w, uint16_t h) noexcept;
-			window_position_t get_position() const noexcept;
-			window_size_t get_size() const noexcept;
+			video::window::Position get_position() const noexcept;
+			video::window::Size get_size() const noexcept;
 			void set_rectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h) noexcept;
-			window_rectangle_t get_rectangle() const noexcept;
-			video::WindowID get_window_id() const noexcept;
+			video::window::Rectangle get_rectangle() const noexcept;
+			video::window::ID get_id() const noexcept;
 
 		private:
 			SDL_Window* m_window;
 		};
 
-		class _Renderer : _Type_counter<_Renderer>
+		class Renderer : TypeCounter<Renderer>
 		{
-			typedef _Type_counter<_Renderer> __Renderer_counter;
+			typedef TypeCounter<Renderer> __Renderer_counter;
 		public:
-			_Renderer(const _Window&);
-			~_Renderer() noexcept;
+			Renderer(const Window&);
+			~Renderer() noexcept;
 
-			_Renderer(_Renderer&& p_other) noexcept;
-			_Renderer& operator=(_Renderer&& p_other) noexcept;
+			Renderer(Renderer&& p_other) noexcept;
+			Renderer& operator=(Renderer&& p_other) noexcept;
 		private:
-			_Renderer(const _Renderer& p_other) = delete;
-			_Renderer& operator=(const _Renderer& p_other) = delete;
-
+			Renderer(const Renderer& p_other) = delete;
+			Renderer& operator=(const Renderer& p_other) = delete;
 		public:
-			void set_color(common::Color::red_t r, 
-						   common::Color::green_t g, 
-						   common::Color::blue_t b, 
-						   common::Color::alpha_t a) noexcept;
+			operator SDL_Renderer*() const
+			{
+				return m_data;
+			}
+
+			void set_color(video::Color::uintx_t r, 
+						   video::Color::uintx_t g,
+						   video::Color::uintx_t b,
+						   video::Color::uintx_t a) noexcept;
+			video::Color get_color() noexcept;
 			void clear() noexcept;
 			void present() noexcept;
 
-			template<common::concepts::_Arithmethic_concept _Type>
-			void draw(geometry::Rect<_Type> p_rect, bool p_filled = false) noexcept
+			template<common::concepts::Arithmethic Type>
+			void draw(geometry::Rect<Type> p_rect, bool p_filled = false) noexcept
 			{
 				// a bool has two values, thus the draw lookup has the size of two
-				static void (*draw_lookup[2])(SDL_Renderer*, SDL_Rect&) =
+				static void (*draw_lookup[2])(SDL_Renderer*, SDL_FRect&) =
 				{
-					[](SDL_Renderer* p_renderer, SDL_Rect& p_rect) { SDL_RenderDrawRect(p_renderer, &p_rect); },
-					[](SDL_Renderer* p_renderer, SDL_Rect& p_rect) { SDL_RenderFillRect(p_renderer, &p_rect); }
+					[](SDL_Renderer* p_renderer, SDL_FRect& p_rect) { SDL_RenderDrawRectF(p_renderer, &p_rect); },
+					[](SDL_Renderer* p_renderer, SDL_FRect& p_rect) { SDL_RenderFillRectF(p_renderer, &p_rect); }
 				};
-
-				SDL_Rect rect = { static_cast<int>(p_rect.m_x),
-								  static_cast<int>(p_rect.m_y),
-								  static_cast<int>(p_rect.m_w),
-								  static_cast<int>(p_rect.m_h) };
-
-				std::function<void(void)> if_else[2] =
-				{
-					[this, &rect]() { SDL_RenderDrawRect(m_renderer, &rect); },
-					[this, &rect]() { SDL_RenderFillRect(m_renderer, &rect); }
-				};
-
-				//Branchless::IF_ELSE(p_filled, if_else);
-				draw_lookup[p_filled](m_renderer, rect);
+				SDL_FRect rect = { static_cast<float>(p_rect.m_x),
+								   static_cast<float>(p_rect.m_y),
+								   static_cast<float>(p_rect.m_w),
+								   static_cast<float>(p_rect.m_h) };
+				draw_lookup[p_filled](m_data, rect);
 			}
-			template<common::concepts::_Arithmethic_concept _Type>
-			void draw(geometry::Point<_Type> p_point) noexcept
+			template<common::concepts::Arithmethic Type>
+			void draw(geometry::Point<Type> p_point) noexcept
 			{
-				SDL_RenderDrawPointF(m_renderer,
+				SDL_RenderDrawPointF(m_data,
 									 static_cast<float>(p_point.m_x),
 									 static_cast<float>(p_point.m_y));
 			}
-			template<common::concepts::_Arithmethic_concept _Type>
-			void draw(geometry::Line<_Type> p_line) noexcept
+			template<common::concepts::Arithmethic Type>
+			void draw(geometry::Line<Type> p_line) noexcept
 			{ 
-				SDL_RenderDrawLineF(m_renderer,
+				SDL_RenderDrawLineF(m_data,
 									static_cast<float>(p_line.m_start.m_x),
 									static_cast<float>(p_line.m_start.m_y),
 									static_cast<float>(p_line.m_end.m_x),
 									static_cast<float>(p_line.m_end.m_y));
 			}
+			void draw(const Texture& that) noexcept
+			{
+				SDL_Rect rect{0, 0, 0, 0};
+				SDL_QueryTexture(that, nullptr, nullptr, &rect.w, &rect.h);
+				SDL_RenderCopy(m_data, that, nullptr, &rect);
+			}
+			template<common::concepts::Arithmethic SrcType, common::concepts::Arithmethic DstType>
+			void draw(const Texture& that, geometry::Rect<SrcType> src, geometry::Rect<DstType> dst) noexcept
+			{
+				SDL_Rect s = { static_cast<int>(src.m_x),
+							   static_cast<int>(src.m_y),
+							   static_cast<int>(src.m_w),
+							   static_cast<int>(src.m_h) };
+				SDL_FRect d = { static_cast<float>(dst.m_x),
+								static_cast<float>(dst.m_y),
+								static_cast<float>(dst.m_w),
+								static_cast<float>(dst.m_h) };
+				SDL_RenderCopyF(m_data, that, &s, &d);
+			}
+
 
 		private:
-			SDL_Renderer* m_renderer;
+			SDL_Renderer* m_data;
 		};
 
 	}
