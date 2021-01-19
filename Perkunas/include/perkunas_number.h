@@ -10,24 +10,24 @@ namespace perkunas
 {
 	namespace common
 	{
-		template <common::concepts::Arithmethic ArithmethicType>
-		constexpr ArithmethicType max_value()
+		template <common::concepts::Arithmethic Number>
+		constexpr Number max_value()
 		{
-			return ArithmethicType(~0);
+			return Number(~0);
 		}
 
-		template<common::concepts::Arithmethic ArithmethicType>
+		template<common::concepts::Arithmethic Number>
 		struct Number
 		{
-			ArithmethicType m_value;
+			Number m_value;
 
-			template<common::concepts::Arithmethic _Other_type>
-			operator _Other_type() noexcept
+			template<common::concepts::Arithmethic OtherNumber>
+			operator OtherNumber() noexcept
 			{
-				return static_cast<_Other_type>(m_value);
+				return static_cast<OtherNumber>(m_value);
 			}
 			Number()
-				: m_value(max_value<ArithmethicType>())
+				: m_value(max_value<Number>())
 			{
 			}
 

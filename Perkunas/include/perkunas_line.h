@@ -9,17 +9,17 @@ namespace perkunas
 {
 	namespace geometry
 	{
-		template<common::concepts::Arithmethic ArithmethicType>
+		template<common::concepts::Arithmethic Number>
 		struct Line 
 		{
-			Point<ArithmethicType> m_start;
-			Point<ArithmethicType> m_end;
+			Point<Number> m_start;
+			Point<Number> m_end;
 
-			template<common::concepts::Arithmethic _Other_type>
-			operator Line<_Other_type>() noexcept
+			template<common::concepts::Arithmethic OtherNumber>
+			operator Line<OtherNumber>() noexcept
 			{
-				return { { Point<_Other_type>(m_start) },
-						 { Point<_Other_type>(m_end) } };
+				return { { Point<OtherNumber>(m_start) },
+						 { Point<OtherNumber>(m_end) } };
 			}
 		};
 	}

@@ -9,16 +9,17 @@ namespace perkunas
 {
 	namespace geometry
 	{
-		template<common::concepts::Arithmethic ArithmethicType>
+		template<common::concepts::Arithmethic Number>
 		struct Point
 		{
-			ArithmethicType m_x;
-			ArithmethicType m_y;
+			Number m_x;
+			Number m_y;
 
-			template<common::concepts::Arithmethic _Other_type>
-			operator Point<_Other_type>() noexcept
+			template<common::concepts::Arithmethic OtherNumber>
+			operator Point<OtherNumber>() noexcept
 			{
-				return { static_cast<_Other_type>(m_x), static_cast<_Other_type>(m_y) } ;
+				return { static_cast<OtherNumber>(m_x), 
+						 static_cast<OtherNumber>(m_y) } ;
 			}
 		};
 	}
