@@ -4,7 +4,6 @@
 
 #include <exception>
 #include <algorithm>
-#include "..\include\perkunas.h"
 
 
 namespace perkunas

@@ -13,7 +13,7 @@ Application::Application()
 	: m_video("", {})
 {
 	set_state(State::Init);
-	m_events.add_callbacks(*this);
+	m_events.add(*this);
 
 	prk::video::window::Rectangle window_rect;
 	prk::video::window::Title window_title;
@@ -47,6 +47,13 @@ void Application::run()
 	set_state(State::Run);
 
 	auto texture = m_video.create_texture("sprite.bmp");
+	prk::video::Sprite::Target at{ 64, 64, 27 * 4, 19 * 4};
+	prk::video::Sprite sprite{texture, { 0, 0, 27, 19 }};
+	prk::chrono::Timer timer(prk::chrono::Seconds(5), [](prk::chrono::Timer& myself)
+							 {
+								printf("CALLBACK!\n");
+							 });
+	m_chrono.add(timer);
 
 	while(is_running())
 	{
@@ -57,11 +64,12 @@ void Application::run()
 
 		m_video.set(prk::video::Color{ 125, 125, 125, 255 });
 		m_video.clear();
-
+		
 		m_gomoku.draw(m_video);
+		m_video.draw(sprite, at);
 		m_video.present();
 
-		std::this_thread::sleep_for(Milliseconds{16});
+		m_chrono.delay(prk::chrono::Milliseconds(32));
 	}
 }
 

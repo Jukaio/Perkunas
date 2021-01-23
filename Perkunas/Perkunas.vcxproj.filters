@@ -59,8 +59,15 @@
     <ClCompile Include="source\perkunas_internal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\perkunas_chrono_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\perkunas_types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

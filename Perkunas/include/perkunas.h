@@ -3,11 +3,6 @@
 #ifndef INCLUDED_PERKUNAS_H
 #define INCLUDED_PERKUNAS_H
 
-#include <memory>
-#include <stdint.h>
-#include <string>
-#include <limits>
-
 #include "perkunas_events.h"
 #include "perkunas_color.h"
 
@@ -21,74 +16,43 @@ namespace perkunas
 			System();
 			~System();
 
-			template<event::concepts::IsCallback CallbackType>
-			void add_callbacks(CallbackType& p_callback)
+			template<event::concepts::IsCallback Callback>
+			void add(Callback& that) const
 			{
-				if(event::concepts::HasInputCallback<CallbackType>)
-					add_callback(dynamic_cast<event::callback::Input&>(p_callback));
-				if(event::concepts::HasWindowCallback<CallbackType>)
-					add_callback(dynamic_cast<event::callback::Window&>(p_callback));
+				if(event::concepts::HasInputCallback<Callback>)
+					add_callback(dynamic_cast<event::callback::Input&>(that));
+				if(event::concepts::HasWindowCallback<Callback>)
+					add_callback(dynamic_cast<event::callback::Window&>(that));
 			}
 
-			void poll();
+			void poll() const;
 
 		private:
-			void add_callback(event::callback::Window&);
-			void add_callback(event::callback::Input&);
+			void add_callback(event::callback::Window&) const;
+			void add_callback(event::callback::Input&) const;
 
 			class Impl;
 			std::unique_ptr<Impl> m_impl;
 		};
 	}
-
 	namespace video
 	{
-		class System;
-		class Texture
-		{
-			friend System;
-		public:
-			Texture();
-			~Texture();
-
-		private:
-			class Impl;
-			std::shared_ptr<Impl> m_impl = nullptr;
-		};
-
-		class Sprite
-		{
-			friend System;
-		public:
-			typedef geometry::Rect<int> Rect;
-
-			Sprite() = default;
-			Sprite(const Texture&, const Rectangle&);
-		private:
-			Texture m_image{};
-			Rect m_source{};
-		};
-
 		class System
 		{
 		public:
-			System(const video::window::Title&, const video::window::Rectangle&);
+			System(const video::window::Title&, 
+				   const video::window::Rectangle&);
 			~System();
 
-			Texture create_texture(const common::FilePath&);
+			Texture create_texture(const common::FilePath&) const;
 
-			// Setters
-			// Window
-			void set(const video::window::Title&);
-			void set(const video::window::Position&);
-			void set(const video::window::Size&);
-			void set(const video::window::Rectangle&);
-			// Render
-			void set(const video::Color&);
-			void set(video::RectangleStyle);
-			// !Setters
+			void set(const video::window::Title&) const;
+			void set(const video::window::Position&) const;
+			void set(const video::window::Size&) const;
+			void set(const video::window::Rectangle&) const;
+			void set(const video::Color&) const;
+			void set(video::RectangleStyle) const;
 
-			// Generic getter template
 			template<video::GetterTypes ToGet>
 			ToGet get() const
 			{
@@ -96,13 +60,12 @@ namespace perkunas
 				// Unless the user changed the WindowTypes concept
 				return ToGet{};
 			}
-			// !Generic getters
 
-			void draw(const Rectangle&);
-			void draw(const Pixel&);
-			void draw(const Line&);
-			void draw(const Texture&);
-			void draw(const Sprite&, const TargetRectangle&);
+			void draw(const Rectangle&) const;
+			void draw(const Pixel&) const;
+			void draw(const Line&) const;
+			void draw(const Texture&) const;
+			void draw(const Sprite&, const Sprite::Target&) const;
 
 			void clear();
 			void present();
@@ -120,6 +83,26 @@ namespace perkunas
 		extern template video::window::ID System::get() const;
 		extern template video::RectangleStyle System::get() const;
 		extern template video::Color System::get() const;
+	}
+
+	namespace chrono
+	{
+		class System
+		{
+		public:
+			System();
+			~System();
+
+			void add(Timer&) const;
+			void remove(Timer&) const;
+			void delay(Milliseconds) const;
+			Milliseconds now() const;
+
+		private:
+			class Impl;
+			std::unique_ptr<Impl> m_impl;
+
+		};
 	}
 }
 #endif // !INCLUDED_PERKUNAS_H

@@ -3,7 +3,7 @@
 #ifndef INCLUDED_PERKUNAS_TEMPLATE_CONCEPTS_H
 #define INCLUDED_PERKUNAS_TEMPLATE_CONCEPTS_H
 
-#include <type_traits>
+#include <stdint.h>
 
 namespace perkunas
 {

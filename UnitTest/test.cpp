@@ -22,8 +22,8 @@ namespace perkunas
 			WindowSize new_size{ 100, 200 };
 			video.set(new_size);
 
-			return new_size.m_x == video.get_window_size().m_x &&
-				   new_size.m_y == video.get_window_size().m_y;
+			return new_size.m_x == video.get<window::Size>().m_x &&
+				   new_size.m_y == video.get<window::Size>().m_y;
 		}
 
 		TEST(Perkunas, Video)
@@ -76,7 +76,7 @@ namespace perkunas
 
 			auto event = System();
 			TestApplication class_with_callbacks(received_something);
-			event.add_callbacks(class_with_callbacks);
+			event.add(class_with_callbacks);
 
 			video::test_init();
 			event.poll();

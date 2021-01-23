@@ -32,8 +32,6 @@ Add handles for each of those
 #include <typeinfo>
 #include <type_traits>
 #include <string>
-#include <functional>
-#include <array>
 
 #pragma warning(push)
 #pragma warning(disable: 26494)
@@ -133,7 +131,7 @@ namespace perkunas
 			{
 			public:
 				Timer();
-				~Timer() noexcept;
+				virtual ~Timer() noexcept;
 
 			private:
 				Timer(const Timer&) = delete;
@@ -146,7 +144,7 @@ namespace perkunas
 			{
 			public:
 				Audio();
-				~Audio() noexcept;
+				virtual ~Audio() noexcept;
 
 			private:
 				Audio(const Audio&) = delete;
@@ -159,14 +157,14 @@ namespace perkunas
 			{
 			public:
 				Video();
-				~Video() noexcept;
+				virtual ~Video() noexcept;
 			};
 
 			class Events : UniqueExistor<Events>
 			{
 			public:
 				Events();
-				~Events() noexcept;
+				virtual ~Events() noexcept;
 
 			private:
 				Events(const Events&) = delete;

@@ -32,11 +32,14 @@
     <ClInclude Include="source\perkunas_internal.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\perkunas_types.cpp" />
+    <ClCompile Include="source\perkunas_chrono_system.cpp" />
     <ClCompile Include="source\perkunas_event_system.cpp" />
     <ClCompile Include="source\perkunas_internal.cpp" />
     <ClCompile Include="source\perkunas_video_system.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -104,7 +107,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
@@ -126,7 +129,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
@@ -176,6 +179,7 @@
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -232,6 +236,7 @@
       <AdditionalIncludeDirectories>include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>

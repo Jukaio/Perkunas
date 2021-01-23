@@ -9,9 +9,7 @@
 #include <array>
 #include "FileReader.hpp"
 #include <bitset>
-#include <functional>
 #include <cmath>
-#include <chrono>
 #include <thread>
 
 class BitMatrix
@@ -365,7 +363,6 @@ private:
 		Motion::Coordinate m_position;
 	};
 
-
 	class Gomoku
 	{
 	public:		
@@ -550,9 +547,6 @@ private:
 		White m_white{ Player::Type::Computer };
 		Board m_board;
 	};
-
-
-
 	enum class State
 	{
 		Undefined = -1,
@@ -588,6 +582,7 @@ private:
 
 	prk::video::System m_video;
 	prk::event::System m_events;
+	prk::chrono::System m_chrono;
 
 	KeyboardState m_keyboard{};
 	MouseState m_mouse{};

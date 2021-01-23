@@ -59,37 +59,37 @@ namespace perkunas
 		{
 
 		}
-		Texture System::create_texture(const common::FilePath& at)
+		Texture System::create_texture(const common::FilePath& at) const
 		{
 			Texture texture;
 			texture.m_impl = std::make_shared<Texture::Impl>(m_impl->m_renderer, at);
 			return texture;
 		}
 
-		void System::set(const video::window::Title& p_title)
+		void System::set(const video::window::Title& p_title) const
 		{
 			m_impl->m_window.set_title(p_title);
 		}
 
-		void System::set(const video::window::Position& p_position)
+		void System::set(const video::window::Position& p_position) const
 		{
 			m_impl->m_window.set_position(static_cast<uint16_t>(p_position.m_x),
 										   static_cast<uint16_t>(p_position.m_y));
 		}
 
-		void System::set(const video::window::Size& p_size)
+		void System::set(const video::window::Size& p_size) const
 		{
 			m_impl->m_window.set_size(static_cast<uint16_t>(p_size.m_x),
 									  static_cast<uint16_t>(p_size.m_y));
 
 		}
 
-		void System::set(const video::window::Rectangle& p_rect)
+		void System::set(const video::window::Rectangle& p_rect) const
 		{
 			m_impl->m_window.set_rectangle(static_cast<uint16_t>(p_rect.m_x),
-															   static_cast<uint16_t>(p_rect.m_y),
-															   static_cast<uint16_t>(p_rect.m_w),
-															   static_cast<uint16_t>(p_rect.m_h));
+										   static_cast<uint16_t>(p_rect.m_y),
+										   static_cast<uint16_t>(p_rect.m_w),
+										   static_cast<uint16_t>(p_rect.m_h));
 		}
 
 		void System::clear()
@@ -100,33 +100,33 @@ namespace perkunas
 		{
 			m_impl->m_renderer.present();
 		}
-		void System::set(const video::Color& p_color)
+		void System::set(const video::Color& p_color) const
 		{
 			m_impl->m_renderer.set_color(p_color.red, p_color.green, p_color.blue, p_color.alpha);
 		}
-		void System::set(video::RectangleStyle that)
+		void System::set(video::RectangleStyle that) const
 		{
 			m_impl->m_rect_style = that;
 		}
-		void System::draw(const Rectangle& p_rect)
+		void System::draw(const Rectangle& p_rect) const
 		{
 			m_impl->m_renderer.draw(p_rect, m_impl->m_rect_style == RectangleStyle::FILLED);
 		}
-		void System::draw(const Pixel& p_pixel)
+		void System::draw(const Pixel& p_pixel) const
 		{
 			m_impl->m_renderer.draw(p_pixel);
 		}
-		void System::draw(const Line& p_line)
+		void System::draw(const Line& p_line) const
 		{
 			m_impl->m_renderer.draw(p_line);
 		}
 
-		void System::draw(const Texture& that)
+		void System::draw(const Texture& that) const
 		{
 			m_impl->m_renderer.draw(*that.m_impl);
 		}
 
-		void System::draw(const Sprite& that, const TargetRectangle& at)
+		void System::draw(const Sprite& that, const Sprite::Target& at) const
 		{
 			auto& texture = that.m_image;
 			auto& source = that.m_source;

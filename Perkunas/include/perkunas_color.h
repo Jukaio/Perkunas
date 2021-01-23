@@ -54,7 +54,6 @@ namespace perkunas
 					assign(value);
 					return *this;
 				}
-
 				template<common::concepts::Arithmethic NumberType>
 				operator NumberType() const noexcept
 				{
@@ -129,7 +128,6 @@ namespace perkunas
 				color.blue	= static_cast<uintx_t>((0x000000FF & hex) >> 0);
 				return color;
 			}
-
 
 			Channel red{};
 			Channel green{};

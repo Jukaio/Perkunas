@@ -103,7 +103,7 @@ namespace perkunas
         public:
             Common(video::window::ID p_window_id)
                 : m_window_id(p_window_id) {}
-            video::window::ID m_window_id { static_cast<video::window::ID>(~0) };
+            video::window::ID m_window_id { common::max_value<video::window::ID>() };
             virtual ~Common() = default;
         };
         namespace window
@@ -753,13 +753,13 @@ namespace perkunas
         }
         namespace concepts
         {
-            template<typename CallbackType>
-            concept HasWindowCallback = std::is_base_of <callback::Window, CallbackType>::value;
-            template<typename CallbackType>
-            concept HasInputCallback = std::is_base_of <callback::Input, CallbackType>::value;
-            template<typename CallbackType>
-            concept IsCallback = HasWindowCallback<CallbackType> ||
-                                 HasInputCallback<CallbackType>;
+            template<typename Callback>
+            concept HasWindowCallback = std::is_base_of <callback::Window, Callback>::value;
+            template<typename Callback>
+            concept HasInputCallback = std::is_base_of <callback::Input, Callback>::value;
+            template<typename Callback>
+            concept IsCallback = HasWindowCallback<Callback> ||
+                                 HasInputCallback<Callback>;
         }
 	}
 }

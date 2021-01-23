@@ -20,7 +20,6 @@ namespace perkunas
 		{
 		}
 
-
 		typedef std::function <void(const SDL_Event&)> ConvertSDLFunction;
 		class System::Impl : public internal::init::Events
 		{
@@ -269,21 +268,21 @@ namespace perkunas
 
 			};
 
-			Window m_window_callback_system;
-			Input m_input_callback_system;
+			Window m_window_callbacks;
+			Input m_input_callbacks;
 
 			const ConvertSDLFunction(&generate_lookup())[SDL_EventType::SDL_LASTEVENT]
 			{
 				typedef event::input::Base::Type EventType;
 
 				static ConvertSDLFunction convert_functions[SDL_EventType::SDL_LASTEVENT];
-				convert_functions[SDL_KEYDOWN] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::Keyboard)];
-				convert_functions[SDL_KEYUP] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::Keyboard)];
-				convert_functions[SDL_MOUSEBUTTONDOWN] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::MouseButton)];
-				convert_functions[SDL_MOUSEBUTTONUP] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::MouseButton)];
-				convert_functions[SDL_MOUSEMOTION] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::MouseMotion)];
-				convert_functions[SDL_MOUSEWHEEL] = m_input_callback_system.callback_lookup[static_cast<int>(EventType::MouseWheel)];
-				convert_functions[SDL_WINDOWEVENT] = m_window_callback_system.m_event_forwarder;
+				convert_functions[SDL_KEYDOWN] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::Keyboard)];
+				convert_functions[SDL_KEYUP] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::Keyboard)];
+				convert_functions[SDL_MOUSEBUTTONDOWN] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::MouseButton)];
+				convert_functions[SDL_MOUSEBUTTONUP] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::MouseButton)];
+				convert_functions[SDL_MOUSEMOTION] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::MouseMotion)];
+				convert_functions[SDL_MOUSEWHEEL] = m_input_callbacks.callback_lookup[static_cast<int>(EventType::MouseWheel)];
+				convert_functions[SDL_WINDOWEVENT] = m_window_callbacks.m_event_forwarder;
 
 				return convert_functions;
 			}
@@ -293,13 +292,13 @@ namespace perkunas
 			Impl() = default;
 			~Impl() = default;
 
-			void add_window_callbacks(WindowCallback* p_callback)
+			void add(WindowCallback* p_callback)
 			{
-				m_window_callback_system.m_callback_adder(p_callback);
+				m_window_callbacks.m_callback_adder(p_callback);
 			}
-			void add_input_callbacks(InputCallback* p_callback)
+			void add(InputCallback* p_callback)
 			{
-				m_input_callback_system.m_callback_adder(p_callback);
+				m_input_callbacks.m_callback_adder(p_callback);
 			}
 
 			const void operator()(const SDL_Event& p_external_event)
@@ -309,7 +308,7 @@ namespace perkunas
 			}
 		};
 
-		void System::poll()
+		void System::poll() const
 		{
 			SDL_Event ev;
 			while(SDL_PollEvent(&ev))
@@ -317,13 +316,13 @@ namespace perkunas
 				(*m_impl)(ev);
 			}
 		}
-		void System::add_callback(event::callback::Window& p_callback)
+		void System::add_callback(event::callback::Window& p_callback) const
 		{
-			m_impl->add_window_callbacks(&p_callback);
+			m_impl->add(&p_callback);
 		}
-		void System::add_callback(event::callback::Input& p_callback)
+		void System::add_callback(event::callback::Input& p_callback) const
 		{
-			m_impl->add_input_callbacks(&p_callback);
+			m_impl->add(&p_callback);
 		}
 	}
 }
