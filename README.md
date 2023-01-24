@@ -1,6 +1,6 @@
 # Perkunas
 
-  Perkunas is the name of the supporting engine made by me supporting video, timers, and input
+Perkunas is the name of the supporting engine made by me supporting video, timers, and input.
 
 # Gomoku
 
