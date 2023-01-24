@@ -10,3 +10,6 @@ The following project contains the game and its AI implementation using "Minimax
 If you do not know what Gomoku is; Gomoku is similar to Tic-Tac-Toe in terms of mechanics, but the board is bigger (15x15 or 19x19) and requires five pieces in a sequence to win the game. It can get imagined as a more advanced version of Tic-Tac-Toe. 
 
 ![Gomoku](https://user-images.githubusercontent.com/47029889/214385313-23867c67-8b2f-4e97-9515-a260bbbc8c9f.png)
+
+https://user-images.githubusercontent.com/47029889/214385922-20d092db-bcec-4824-95a2-79cd772fca9e.mp4
+
